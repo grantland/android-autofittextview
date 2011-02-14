@@ -29,6 +29,7 @@ public class AutofitTextView extends TextView {
     /* Re size the font so the specified text fits in the text box
      * assuming the text box is the specified width.
      */
+    //TODO binary search
     private void refitText(String text, int textWidth) {
         if (textWidth > 0) {
             int availableWidth = textWidth - this.getPaddingLeft() - this.getPaddingRight();
