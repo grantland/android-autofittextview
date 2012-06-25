@@ -1,11 +1,20 @@
-package com.grantlandchew.view;
+package me.grantland.view;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
 public class AutofitTextView extends TextView {
+    private static final String TAG = "AutoFitTextView";
+
+    private static final int DEFAULT_MIN_TEXT_SIZE = 4; //dp
+
+    //Attributes
+    private float minTextSize;
+    private Paint mPaint;
 
     public AutofitTextView(Context context) {
         super(context);
@@ -18,12 +27,8 @@ public class AutofitTextView extends TextView {
     }
 
     private void init() {
-        //max size defaults to the initially specified text size unless it is too small
-        maxTextSize = this.getTextSize();
-        if (maxTextSize < 11) {
-            maxTextSize = 20;
-        }
-        minTextSize = 10;
+        minTextSize = DEFAULT_MIN_TEXT_SIZE;
+        mPaint = new Paint();
     }
 
     /* Re size the font so the specified text fits in the text box
@@ -32,19 +37,29 @@ public class AutofitTextView extends TextView {
     //TODO binary search
     private void refitText(String text, int textWidth) {
         if (textWidth > 0) {
-            int availableWidth = textWidth - this.getPaddingLeft() - this.getPaddingRight();
-            float trySize = maxTextSize;
+            Context context = getContext();
+            Resources r = Resources.getSystem();
 
-            this.setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
-            while ((trySize > minTextSize) && (this.getPaint().measureText(text) > availableWidth)) {
+            int availableWidth = textWidth - getPaddingLeft() - getPaddingRight();
+            float trySize = getTextSize();
+
+            if (context != null) {
+                r = context.getResources();
+            }
+            mPaint.set(getPaint());
+
+            while ((trySize > minTextSize) && (mPaint.measureText(text) > availableWidth)) {
                 trySize -= 1;
+
                 if (trySize <= minTextSize) {
                     trySize = minTextSize;
                     break;
                 }
-                this.setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
+
+                mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, trySize, r.getDisplayMetrics()));
             }
-            this.setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
+
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
         }
     }
 
@@ -56,7 +71,7 @@ public class AutofitTextView extends TextView {
     @Override
     protected void onSizeChanged (int w, int h, int oldw, int oldh) {
         if (w != oldw) {
-            refitText(this.getText().toString(), w);
+            refitText(getText().toString(), w);
         }
     }
 
@@ -66,7 +81,7 @@ public class AutofitTextView extends TextView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         //int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
-        refitText(this.getText().toString(), parentWidth);
+        refitText(getText().toString(), parentWidth);
     }
 
     //Getters and Setters
@@ -77,17 +92,4 @@ public class AutofitTextView extends TextView {
     public void setMinTextSize(int minTextSize) {
         this.minTextSize = minTextSize;
     }
-
-    public float getMaxTextSize() {
-        return maxTextSize;
-    }
-
-    public void setMaxTextSize(int minTextSize) {
-        this.maxTextSize = minTextSize;
-    }
-
-    //Attributes
-    private float minTextSize;
-    private float maxTextSize;
-
 }

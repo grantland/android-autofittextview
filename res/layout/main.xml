@@ -33,7 +33,7 @@
     android:layout_height="wrap_content"
     android:text="Autofit:"
     />
-<com.grantlandchew.view.AutofitTextView
+<me.grantland.view.AutofitTextView
     android:id="@+id/output_autofit"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"

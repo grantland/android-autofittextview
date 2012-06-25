@@ -1,4 +1,4 @@
-package com.grantlandchew.example.autofittextview;
+package me.grantland.autofittextview;
 
 import android.app.Activity;
 import android.os.Bundle;
