@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.TextView;
 
 public class AutofitTextView extends TextView {
+
+    private static final String TAG = "me.grantland.widget.AutoFitTextView";
+    private static final boolean SPEW = false;
 
     // Minimum size of the text in pixels
     private static final int DEFAULT_MIN_TEXT_SIZE = 8; //px
@@ -16,6 +20,7 @@ public class AutofitTextView extends TextView {
 
     //Attributes
     private float mMinTextSize;
+    private float mMaxTextSize;
     private int mSlop;
     private Paint mPaint;
 
@@ -31,17 +36,27 @@ public class AutofitTextView extends TextView {
 
     private void init() {
         mMinTextSize = DEFAULT_MIN_TEXT_SIZE;
+        mMaxTextSize = getTextSize();
         mSlop = SLOP;
         mPaint = new Paint();
     }
 
     // Getters and Setters
+
     public float getMinTextSize() {
         return mMinTextSize;
     }
 
     public void setMinTextSize(int minTextSize) {
         mMinTextSize = minTextSize;
+    }
+
+    public float getMaxTextSize() {
+        return mMaxTextSize;
+    }
+
+    public void setMaxTextSize(int maxTextSize) {
+        mMaxTextSize = maxTextSize;
     }
 
     public int getSlop() {
@@ -62,29 +77,35 @@ public class AutofitTextView extends TextView {
             Resources r = Resources.getSystem();
 
             int targetWidth = width - getPaddingLeft() - getPaddingRight();
-            float high = getTextSize();
+            float newTextSize = mMaxTextSize;
+            float high = mMaxTextSize;
             float low = 0;
 
             if (context != null) {
                 r = context.getResources();
             }
+
             mPaint.set(getPaint());
+            mPaint.setTextSize(newTextSize);
 
             if (mPaint.measureText(text) > targetWidth) {
-                float textSize = getTextSize(r, text, targetWidth, low, high);
+                newTextSize = getTextSize(r, text, targetWidth, low, high);
 
-                if (textSize < mMinTextSize) {
-                    textSize = mMinTextSize;
+                if (newTextSize < mMinTextSize) {
+                    newTextSize = mMinTextSize;
                 }
-
-                setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
             }
+
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, newTextSize);
+
         }
     }
 
-    // Recursive bineary search to find the best size for the text
+    // Recursive binary search to find the best size for the text
     private float getTextSize(Resources resources, String text, float targetWidth, float low, float high) {
         float mid = (low + high) / 2.0f;
+
+        if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid);
 
         mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid, resources.getDisplayMetrics()));
         float textWidth = mPaint.measureText(text);
