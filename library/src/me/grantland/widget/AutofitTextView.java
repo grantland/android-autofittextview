@@ -18,7 +18,7 @@ public class AutofitTextView extends TextView {
     // Amount of pixels under the target width we can accept as a good size for the text
     private static final int SLOP = 5; // px
 
-    //Attributes
+    // Attributes
     private float mMinTextSize;
     private float mMaxTextSize;
     private int mSlop;
@@ -105,10 +105,11 @@ public class AutofitTextView extends TextView {
     private float getTextSize(Resources resources, String text, float targetWidth, float low, float high) {
         float mid = (low + high) / 2.0f;
 
-        if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid);
-
         mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid, resources.getDisplayMetrics()));
         float textWidth = mPaint.measureText(text);
+
+        if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid + " target=" + targetWidth + " width=" + textWidth);
+
         if (textWidth > targetWidth) {
             return getTextSize(resources, text, targetWidth, low, mid - 1);
         }
@@ -121,12 +122,14 @@ public class AutofitTextView extends TextView {
     }
 
     @Override
-    protected void onTextChanged(final CharSequence text, final int start, final int before, final int after) {
+    protected void onTextChanged(final CharSequence text, final int start, final int lengthBefore, final int lengthAfter) {
+        super.onTextChanged(text, start, lengthBefore, lengthAfter);
         refitText(text.toString(), this.getWidth());
     }
 
     @Override
     protected void onSizeChanged (int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
         if (w != oldw) {
             refitText(getText().toString(), w);
         }
