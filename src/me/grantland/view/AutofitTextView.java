@@ -8,12 +8,15 @@ import android.util.TypedValue;
 import android.widget.TextView;
 
 public class AutofitTextView extends TextView {
-    private static final String TAG = "AutoFitTextView";
 
-    private static final int DEFAULT_MIN_TEXT_SIZE = 4; //dp
+    // Minimum size of the text in pixels
+    private static final int DEFAULT_MIN_TEXT_SIZE = 8; //px
+    // Amount of pixels under the target width we can accept as a good size for the text
+    private static final int SLOP = 5; // px
 
     //Attributes
-    private float minTextSize;
+    private float mMinTextSize;
+    private int mSlop;
     private Paint mPaint;
 
     public AutofitTextView(Context context) {
@@ -27,39 +30,72 @@ public class AutofitTextView extends TextView {
     }
 
     private void init() {
-        minTextSize = DEFAULT_MIN_TEXT_SIZE;
+        mMinTextSize = DEFAULT_MIN_TEXT_SIZE;
+        mSlop = SLOP;
         mPaint = new Paint();
     }
 
-    /* Re size the font so the specified text fits in the text box
+    // Getters and Setters
+    public float getMinTextSize() {
+        return mMinTextSize;
+    }
+
+    public void setMinTextSize(int minTextSize) {
+        mMinTextSize = minTextSize;
+    }
+
+    public int getSlop() {
+        return mSlop;
+    }
+
+    public void setSlop(int slop) {
+        mSlop = slop;
+    }
+
+    /**
+     * Re size the font so the specified text fits in the text box
      * assuming the text box is the specified width.
      */
-    //TODO binary search
-    private void refitText(String text, int textWidth) {
-        if (textWidth > 0) {
+    private void refitText(String text, int width) {
+        if (width > 0) {
             Context context = getContext();
             Resources r = Resources.getSystem();
 
-            int availableWidth = textWidth - getPaddingLeft() - getPaddingRight();
-            float trySize = getTextSize();
+            int targetWidth = width - getPaddingLeft() - getPaddingRight();
+            float high = getTextSize();
+            float low = 0;
 
             if (context != null) {
                 r = context.getResources();
             }
             mPaint.set(getPaint());
 
-            while ((trySize > minTextSize) && (mPaint.measureText(text) > availableWidth)) {
-                trySize -= 1;
+            if (mPaint.measureText(text) > targetWidth) {
+                float textSize = getTextSize(r, text, targetWidth, low, high);
 
-                if (trySize <= minTextSize) {
-                    trySize = minTextSize;
-                    break;
+                if (textSize < mMinTextSize) {
+                    textSize = mMinTextSize;
                 }
 
-                mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, trySize, r.getDisplayMetrics()));
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
             }
+        }
+    }
 
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
+    // Recursive bineary search to find the best size for the text
+    private float getTextSize(Resources resources, String text, float targetWidth, float low, float high) {
+        float mid = (low + high) / 2.0f;
+
+        mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid, resources.getDisplayMetrics()));
+        float textWidth = mPaint.measureText(text);
+        if (textWidth > targetWidth) {
+            return getTextSize(resources, text, targetWidth, low, mid - 1);
+        }
+        else if (textWidth + mSlop < targetWidth) {
+            return getTextSize(resources, text, targetWidth, mid + 1, high);
+        }
+        else {
+            return mid;
         }
     }
 
@@ -80,16 +116,6 @@ public class AutofitTextView extends TextView {
     {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
-        //int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
         refitText(getText().toString(), parentWidth);
-    }
-
-    //Getters and Setters
-    public float getMinTextSize() {
-        return minTextSize;
-    }
-
-    public void setMinTextSize(int minTextSize) {
-        this.minTextSize = minTextSize;
     }
 }
