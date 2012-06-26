@@ -8,6 +8,11 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.widget.TextView;
 
+/**
+ * A TextView that resizes it's text to be no larger than the width of the view.
+ *
+ * @author Grantland Chew <grantlandchew@gmail.com>
+ */
 public class AutofitTextView extends TextView {
 
     private static final String TAG = "me.grantland.widget.AutoFitTextView";
