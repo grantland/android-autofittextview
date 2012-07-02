@@ -20,13 +20,13 @@ public class AutofitTextView extends TextView {
 
     // Minimum size of the text in pixels
     private static final int DEFAULT_MIN_TEXT_SIZE = 8; //px
-    // Amount of pixels under the target width we can accept as a good size for the text
-    private static final int SLOP = 5; // px
+    // How precise we want to be when reaching the target textWidth size
+    private static final float PRECISION = 0.5f;
 
     // Attributes
     private float mMinTextSize;
     private float mMaxTextSize;
-    private int mSlop;
+    private float mPrecision;
     private Paint mPaint;
 
     public AutofitTextView(Context context) {
@@ -42,7 +42,7 @@ public class AutofitTextView extends TextView {
     private void init() {
         mMinTextSize = DEFAULT_MIN_TEXT_SIZE;
         mMaxTextSize = getTextSize();
-        mSlop = SLOP;
+        mPrecision = PRECISION;
         mPaint = new Paint();
     }
 
@@ -64,12 +64,12 @@ public class AutofitTextView extends TextView {
         mMaxTextSize = maxTextSize;
     }
 
-    public int getSlop() {
-        return mSlop;
+    public float getPrecision() {
+        return mPrecision;
     }
 
-    public void setSlop(int slop) {
-        mSlop = slop;
+    public void setPrecision(float precision) {
+        mPrecision = precision;
     }
 
     /**
@@ -115,11 +115,14 @@ public class AutofitTextView extends TextView {
 
         if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid + " target=" + targetWidth + " width=" + textWidth);
 
-        if (textWidth > targetWidth) {
-            return getTextSize(resources, text, targetWidth, low, mid - 1);
+        if ((high - low) < mPrecision) {
+            return low;
         }
-        else if (textWidth + mSlop < targetWidth) {
-            return getTextSize(resources, text, targetWidth, mid + 1, high);
+        else if (textWidth > targetWidth) {
+            return getTextSize(resources, text, targetWidth, low, mid);
+        }
+        else if (textWidth < targetWidth) {
+            return getTextSize(resources, text, targetWidth, mid, high);
         }
         else {
             return mid;
