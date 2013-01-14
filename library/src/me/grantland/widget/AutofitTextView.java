@@ -85,6 +85,7 @@ public class AutofitTextView extends TextView {
 		mPaint = new Paint();
 		mLayoutDirty = true;
 		
+		mPaint.setColor(0x00ffff);
 		// these settings are pretty much a given, the code assumes that they are set. So lets make sure.
 		setLines(1);
 		setMaxLines(1);
@@ -156,8 +157,7 @@ public class AutofitTextView extends TextView {
 			float targetWidth, float low, float high) {
 		float mid = (low + high) / 2.0f;
 
-		mPaint.setTextSize(TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_PX, mid, resources.getDisplayMetrics()));
+		mPaint.setTextSize(mid);//TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid, resources.getDisplayMetrics()));
 		float textWidth = mPaint.measureText(text);
 
 		if (SPEW)
@@ -179,6 +179,7 @@ public class AutofitTextView extends TextView {
 	protected void onTextChanged(final CharSequence text, final int start,
 			final int lengthBefore, final int lengthAfter) {
 		super.onTextChanged(text, start, lengthBefore, lengthAfter);
+		setTextSize(TypedValue.COMPLEX_UNIT_PX, getMaxTextSize());
 		mLayoutDirty = true;
 	}
 
@@ -189,7 +190,7 @@ public class AutofitTextView extends TextView {
 			mLayoutDirty = true;
 		}
 	}
-//
+
 //	@Override
 //	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 //		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -207,6 +208,11 @@ public class AutofitTextView extends TextView {
 			mLastRefitWidth = parentWidth;
 			mLayoutDirty = false;
 			refitText(getText().toString(), parentWidth);
+//			if (BuildConfig.DEBUG) {
+//				Log.d(TAG, "refitting text: " + getText() + " size: " + getTextSize() + " width: " + parentWidth);
+//			}
+//		} else if (BuildConfig.DEBUG) {
+//			Log.d(TAG, "not refitting text " + getText() + " size: " + getTextSize());
 		}
 	}
 	
