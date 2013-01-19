@@ -1,5 +1,6 @@
 package me.grantland.widget;
 
+import me.grantland.autofittextview.BuildConfig;
 import me.grantland.autofittextview.R;
 import android.content.Context;
 import android.content.res.Resources;
@@ -65,11 +66,21 @@ public class AutofitTextView extends TextView {
 			final int minSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_minTextSize, -1);
 			final int maxSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_maxTextSize, -1);
 			final float precision = ta.getFloat(R.styleable.AutofitTextView_precision, -1.0f);
+			float textSize = getTextSize();
+			final float normalSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_normalTextSize, 0);
+			// on android 4.2 sometimes textsize is not properly set up
+			if (textSize < 0.1f && normalSize > 0) {
+				setTextSize(normalSize);
+				textSize = getTextSize();
+			}
+			Log.d(TAG, "textSize: " + textSize);
 			if (minSize != -1) {
 				setMinTextSize(minSize);
 			}
 			if (maxSize != -1) {
 				setMaxTextSize(maxSize);
+			} else if (mMaxTextSize <= 0.1f && normalSize > 0) {
+				setMaxTextSize((int) normalSize);
 			}
 			if (precision != -1.0f) {
 				setPrecision(precision);
@@ -208,11 +219,11 @@ public class AutofitTextView extends TextView {
 			mLastRefitWidth = parentWidth;
 			mLayoutDirty = false;
 			refitText(getText().toString(), parentWidth);
-//			if (BuildConfig.DEBUG) {
-//				Log.d(TAG, "refitting text: " + getText() + " size: " + getTextSize() + " width: " + parentWidth);
-//			}
-//		} else if (BuildConfig.DEBUG) {
-//			Log.d(TAG, "not refitting text " + getText() + " size: " + getTextSize());
+			if (BuildConfig.DEBUG) {
+				Log.d(TAG, "refitting text: " + getText() + " size: " + getTextSize() + " width: " + parentWidth);
+			}
+		} else if (BuildConfig.DEBUG) {
+			Log.d(TAG, "not refitting text " + getText() + " size: " + getTextSize());
 		}
 	}
 	

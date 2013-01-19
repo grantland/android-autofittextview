@@ -4,6 +4,7 @@
     <declare-styleable name="AutofitTextView">
         <attr name="minTextSize" format="dimension" />
         <attr name="maxTextSize" format="dimension" />
+        <attr name="normalTextSize" format="dimension"/>
         <attr name="precision" format="float" />
     </declare-styleable>
     
