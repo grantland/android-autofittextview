@@ -9,36 +9,37 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:singleLine="true"
+    android:hint="@string/input_hint"
     android:text="@string/example"/>
 <Button
     android:id="@+id/button"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Autofit!"/>
+    android:text="@string/submit_text"/>
 <TextView
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Normal:"
+    android:text="@string/label_normal"
     />
 <TextView
     android:id="@+id/output"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:text="@string/example"
-    android:textSize="50dp"
+    android:textSize="50sp"
     android:gravity="center"
     />
 <TextView
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Autofit:"
+    android:text="@string/label_autofit"
     />
 <me.grantland.widget.AutofitTextView
     android:id="@+id/output_autofit"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:text="@string/example"
-    android:textSize="50dp"
+    android:textSize="50sp"
     android:gravity="center"
     />
 </LinearLayout>

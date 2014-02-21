@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, SampleActivity!</string>
     <string name="app_name">AutoFitTextView</string>
-    
+
+    <string name="input_hint">text</string>
+    <string name="submit_text">Autofit!</string>
+    <string name="label_normal">Normal:</string>
+    <string name="label_autofit">Autofit:</string>
+
     <string name="example">This is an example</string>
 
 </resources>
