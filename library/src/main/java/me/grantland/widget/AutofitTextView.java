@@ -2,12 +2,15 @@ package me.grantland.widget;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.TextView;
+
+import me.grantland.autofittextview.R;
 
 /**
  * A TextView that resizes it's text to be no larger than the width of the view.
@@ -32,20 +35,34 @@ public class AutofitTextView extends TextView {
 
     public AutofitTextView(Context context) {
         super(context);
-        init(context);
+        init(context, null, 0);
     }
 
     public AutofitTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs, 0);
     }
 
-    private void init(Context context) {
+    public AutofitTextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context, attrs, defStyle);
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyle) {
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
-        mMinTextSize = scaledDensity * DEFAULT_MIN_TEXT_SIZE;
-        mPrecision = PRECISION;
+        int minTextSize = (int) scaledDensity * DEFAULT_MIN_TEXT_SIZE;
+        float precision = PRECISION;
+
+        if (attrs != null) {
+            TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.AutofitTextView, defStyle, 0);
+            minTextSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_minTextSize, minTextSize);
+            precision = ta.getFloat(R.styleable.AutofitTextView_precision, precision);
+        }
+
         mPaint = new Paint();
         setRawTextSize(super.getTextSize());
+        setMinTextSize(minTextSize);
+        setPrecision(precision);
         //TODO allow multiple lines and ellipsize settings
         setMaxLines(1);
         setEllipsize(TextUtils.TruncateAt.END);
