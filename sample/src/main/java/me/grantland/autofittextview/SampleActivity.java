@@ -2,6 +2,8 @@ package me.grantland.autofittextview;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -10,9 +12,7 @@ import android.widget.TextView;
 
 public class SampleActivity extends Activity {
 
-    private EditText input;
-    private Button button;
-    private TextView output, output_autofit;
+    private TextView mOutput, mAutofitOutput;
 
     /** Called when the activity is first created. */
     @Override
@@ -20,16 +20,24 @@ public class SampleActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        input = (EditText)findViewById(R.id.input);
-        button = (Button)findViewById(R.id.button);
-        output = (TextView)findViewById(R.id.output);
-        output_autofit = (TextView)findViewById(R.id.output_autofit);
+        mOutput = (TextView)findViewById(R.id.output);
+        mAutofitOutput = (TextView)findViewById(R.id.output_autofit);
 
-        button.setOnClickListener(new OnClickListener() {
+        ((EditText)findViewById(R.id.input)).addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                output.setText(input.getText());
-                output_autofit.setText(input.getText());
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                // do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                mOutput.setText(charSequence);
+                mAutofitOutput.setText(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // do nothing
             }
         });
     }

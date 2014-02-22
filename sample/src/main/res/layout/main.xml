@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<EditText
-    android:id="@+id/input"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:singleLine="true"
-    android:hint="@string/input_hint"
-    android:text="@string/example"/>
-<Button
-    android:id="@+id/button"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/submit_text"/>
-<TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/label_normal"
-    />
-<TextView
-    android:id="@+id/output"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/example"
-    android:textSize="50sp"
-    android:gravity="center"
-    />
-<TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/label_autofit"
-    />
-<me.grantland.widget.AutofitTextView
-    android:id="@+id/output_autofit"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/example"
-    android:textSize="50sp"
-    android:gravity="center"
-    />
-</LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:hint="@string/input_hint"
+            android:text="@string/example"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_normal"
+            />
+        <TextView
+            android:id="@+id/output"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/example"
+            android:textSize="50sp"
+            android:gravity="center"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_autofit"
+            />
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/output_autofit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/example"
+            android:textSize="50sp"
+            android:gravity="center"
+            />
+    </LinearLayout>
+</ScrollView>
