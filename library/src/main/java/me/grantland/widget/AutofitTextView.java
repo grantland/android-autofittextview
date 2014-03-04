@@ -70,17 +70,23 @@ public class AutofitTextView extends TextView {
 
         mPaint = new TextPaint();
         setRawTextSize(super.getTextSize());
-        setMinTextSize(minTextSize);
+        setRawMinTextSize(minTextSize);
         setPrecision(precision);
     }
 
     // Getters and Setters
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public float getTextSize() {
         return mMaxTextSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTextSize(int unit, float size) {
         Context context = getContext();
@@ -100,21 +106,66 @@ public class AutofitTextView extends TextView {
         }
     }
 
+    /**
+     * @return the minimum size (in pixels) of the text size in this AutofitTextView
+     */
     public float getMinTextSize() {
         return mMinTextSize;
     }
 
-    public void setMinTextSize(int minTextSize) {
-        if (minTextSize != mMinTextSize) {
-            mMinTextSize = minTextSize;
+    /**
+     * Set the minimum text size to a given unit and value. See TypedValue for the possible
+     * dimension units.
+     *
+     * @param unit The desired dimension unit.
+     * @param minSize The desired size in the given units.
+     *
+     * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
+     */
+    public void setMinTextSize(int unit, float minSize) {
+        Context context = getContext();
+        Resources r = Resources.getSystem();
+
+        if (context != null) {
+            r = context.getResources();
+        }
+
+        setRawMinTextSize(TypedValue.applyDimension(unit, minSize, r.getDisplayMetrics()));
+    }
+
+    /**
+     * Set the minimum text size to the given value, interpreted as "scaled pixel" units. This size
+     * is adjusted based on the current density and user font size preference.
+     *
+     * @param minSize The scaled pixel size.
+     *
+     * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
+     */
+    public void setMinTextSize(int minSize) {
+        setMinTextSize(TypedValue.COMPLEX_UNIT_SP, minSize);
+    }
+
+    private void setRawMinTextSize(float minSize) {
+        if (minSize != mMinTextSize) {
+            mMinTextSize = minSize;
             refitText();
         }
     }
 
+    /**
+     * @return the amount of precision used to calculate the correct text size to fit within it's
+     * bounds.
+     */
     public float getPrecision() {
         return mPrecision;
     }
 
+    /**
+     * Set the amount of precision used to calculate the correct text size to fit within it's
+     * bounds. Lower precision is more precise and takes more time.
+     *
+     * @param precision The amount of precision.
+     */
     public void setPrecision(float precision) {
         if (precision != mPrecision) {
             mPrecision = precision;
@@ -122,11 +173,17 @@ public class AutofitTextView extends TextView {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMaxLines() {
         return mMaxLines;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setMaxLines(int maxLines) {
         super.setMaxLines(maxLines);
