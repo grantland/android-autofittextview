@@ -40,6 +40,8 @@
             android:text="@string/example"
             android:textSize="50sp"
             android:gravity="center"
+            android:maxLines="2"
+            android:ellipsize="end"
             custom:minTextSize="8sp"
             />
     </LinearLayout>
