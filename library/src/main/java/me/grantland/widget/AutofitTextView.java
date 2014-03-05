@@ -177,6 +177,16 @@ public class AutofitTextView extends TextView {
      * {@inheritDoc}
      */
     @Override
+    public void setLines(int lines) {
+        super.setLines(lines);
+        mMaxLines = lines;
+        refitText();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int getMaxLines() {
         return mMaxLines;
     }
@@ -198,6 +208,11 @@ public class AutofitTextView extends TextView {
      * specified width.
      */
     private void refitText() {
+        if (mMaxLines <= 0) {
+            // Don't auto-size since there's no limit on lines.
+            return;
+        }
+
         String text = getText().toString();
         int targetWidth = getWidth() - getPaddingLeft() - getPaddingRight();
         if (targetWidth > 0) {
@@ -242,16 +257,17 @@ public class AutofitTextView extends TextView {
         int lineCount = 1;
         StaticLayout layout = null;
 
+        paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid,
+                displayMetrics));
+
         if (maxLines != 1) {
-            paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid,
-                    displayMetrics));
             layout = new StaticLayout(text, paint, (int)targetWidth, Layout.Alignment.ALIGN_NORMAL,
                     1.0f, 0.0f, true);
             lineCount = layout.getLineCount();
         }
 
         if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid +
-                " target=" + targetWidth + " lineCount=" + lineCount);
+                " target=" + targetWidth + " maxLines=" + maxLines + " lineCount=" + lineCount);
 
         if (lineCount > maxLines) {
             return getTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
