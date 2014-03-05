@@ -30,6 +30,7 @@ public class AutofitTextView extends TextView {
     private static final float PRECISION = 0.5f;
 
     // Attributes
+    private boolean mSizeToFit;
     private int mMaxLines;
     private float mMinTextSize;
     private float mMaxTextSize;
@@ -53,6 +54,7 @@ public class AutofitTextView extends TextView {
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
         float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        boolean sizeToFit = true;
         int minTextSize = (int) scaledDensity * DEFAULT_MIN_TEXT_SIZE;
         float precision = PRECISION;
 
@@ -62,6 +64,7 @@ public class AutofitTextView extends TextView {
                     R.styleable.AutofitTextView,
                     defStyle,
                     0);
+            sizeToFit = ta.getBoolean(R.styleable.AutofitTextView_sizeToFit, sizeToFit);
             minTextSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_minTextSize,
                     minTextSize);
             precision = ta.getFloat(R.styleable.AutofitTextView_precision, precision);
@@ -69,12 +72,38 @@ public class AutofitTextView extends TextView {
         }
 
         mPaint = new TextPaint();
+        setSizeToFit(sizeToFit);
         setRawTextSize(super.getTextSize());
         setRawMinTextSize(minTextSize);
         setPrecision(precision);
     }
 
     // Getters and Setters
+
+    /**
+     * @return whether or not the text will be automatically resized to fit its constraints.
+     */
+    public boolean isSizeToFit() {
+        return mSizeToFit;
+    }
+
+    /**
+     * Sets the property of this field (singleLine, to automatically resize the text to fit its constraints.
+     */
+    public void setSizeToFit() {
+        setSizeToFit(true);
+    }
+
+    /**
+     * If true, the text will automatically be resized to fit its constraints; if false, it will
+     * act like a normal TextView.
+     *
+     * @param sizeToFit
+     */
+    public void setSizeToFit(boolean sizeToFit) {
+        mSizeToFit = sizeToFit;
+        refitText();
+    }
 
     /**
      * {@inheritDoc}
@@ -208,6 +237,10 @@ public class AutofitTextView extends TextView {
      * specified width.
      */
     private void refitText() {
+        if (!mSizeToFit) {
+            return;
+        }
+
         if (mMaxLines <= 0) {
             // Don't auto-size since there's no limit on lines.
             return;
