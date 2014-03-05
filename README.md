@@ -7,9 +7,20 @@ A TextView that automatically resizes text to fit perfectly within its bounds.
 
 ## Usage
 
-    dependencies {
-        compile 'me.grantland:autofittextview:0.1.+'
-    }
+```
+dependencies {
+    compile 'me.grantland:autofittextview:0.1.+'
+}
+```
+
+```
+<me.grantland.widget.AutofitTextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:singleLine="true"
+    />
+```
+
 
 ## License
 
