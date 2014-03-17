@@ -3,12 +3,8 @@ package me.grantland.widget;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.TextView;
 
@@ -22,7 +18,6 @@ import me.grantland.autofittextview.R;
 public class AutofitTextView extends TextView {
 
     private static final String TAG = "AutoFitTextView";
-    private static final boolean SPEW = false;
 
     // Minimum size of the text in pixels
     private static final int DEFAULT_MIN_TEXT_SIZE = 8; //sp
@@ -32,10 +27,10 @@ public class AutofitTextView extends TextView {
     // Attributes
     private boolean mSizeToFit;
     private int mMaxLines;
+    private float mTextSize;
     private float mMinTextSize;
-    private float mMaxTextSize;
     private float mPrecision;
-    private TextPaint mPaint;
+    private TextUtils.TruncateAt mEllipsize;
 
     public AutofitTextView(Context context) {
         super(context);
@@ -71,7 +66,6 @@ public class AutofitTextView extends TextView {
             ta.recycle();
         }
 
-        mPaint = new TextPaint();
         setSizeToFit(sizeToFit);
         setRawTextSize(super.getTextSize());
         setRawMinTextSize(minTextSize);
@@ -102,7 +96,12 @@ public class AutofitTextView extends TextView {
      */
     public void setSizeToFit(boolean sizeToFit) {
         mSizeToFit = sizeToFit;
-        refitText();
+        if (mSizeToFit) {
+            super.setEllipsize(null);
+        } else {
+            super.setEllipsize(mEllipsize);
+        }
+        requestLayout();
     }
 
     /**
@@ -110,7 +109,15 @@ public class AutofitTextView extends TextView {
      */
     @Override
     public float getTextSize() {
-        return mMaxTextSize;
+        return mTextSize;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTextSize(float size) {
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
     }
 
     /**
@@ -126,13 +133,11 @@ public class AutofitTextView extends TextView {
         }
 
         setRawTextSize(TypedValue.applyDimension(unit, size, r.getDisplayMetrics()));
+        super.setTextSize(unit, size);
     }
 
     private void setRawTextSize(float size) {
-        if (size != mMaxTextSize) {
-            mMaxTextSize = size;
-            refitText();
-        }
+        mTextSize = size;
     }
 
     /**
@@ -148,7 +153,6 @@ public class AutofitTextView extends TextView {
      *
      * @param unit The desired dimension unit.
      * @param minSize The desired size in the given units.
-     *
      * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
      */
     public void setMinTextSize(int unit, float minSize) {
@@ -167,7 +171,6 @@ public class AutofitTextView extends TextView {
      * is adjusted based on the current density and user font size preference.
      *
      * @param minSize The scaled pixel size.
-     *
      * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
      */
     public void setMinTextSize(int minSize) {
@@ -177,7 +180,7 @@ public class AutofitTextView extends TextView {
     private void setRawMinTextSize(float minSize) {
         if (minSize != mMinTextSize) {
             mMinTextSize = minSize;
-            refitText();
+            requestLayout();
         }
     }
 
@@ -198,7 +201,7 @@ public class AutofitTextView extends TextView {
     public void setPrecision(float precision) {
         if (precision != mPrecision) {
             mPrecision = precision;
-            refitText();
+            requestLayout();
         }
     }
 
@@ -209,7 +212,6 @@ public class AutofitTextView extends TextView {
     public void setLines(int lines) {
         super.setLines(lines);
         mMaxLines = lines;
-        refitText();
     }
 
     /**
@@ -226,137 +228,123 @@ public class AutofitTextView extends TextView {
     @Override
     public void setMaxLines(int maxLines) {
         super.setMaxLines(maxLines);
-        if (maxLines != mMaxLines) {
-            mMaxLines = maxLines;
-            refitText();
+        mMaxLines = maxLines;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEllipsize(TextUtils.TruncateAt where) {
+        super.setEllipsize(where);
+        mEllipsize = where;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
+        if (mSizeToFit) {
+            // Superclass TextView will not requestLayout() when both height and width are fixed,
+            // but we need need layout to compute the new font size.
+            requestLayout();
         }
     }
 
     /**
-     * Re size the font so the specified text fits in the text box assuming the text box is the
-     * specified width.
+     * {@inheritDoc}
      */
-    private void refitText() {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (!mSizeToFit) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
 
-        if (mMaxLines <= 0) {
-            // Don't auto-size since there's no limit on lines.
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int maxLines = getMaxLines();
+
+        // Cannot adjust font size to fit if the desired view size is unbounded
+        if (widthMode == MeasureSpec.UNSPECIFIED ||
+            (heightMode == MeasureSpec.UNSPECIFIED &&
+             (maxLines <= 0 || maxLines == Integer.MAX_VALUE))) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
 
-        String text = getText().toString();
-        int targetWidth = getWidth() - getPaddingLeft() - getPaddingRight();
-        if (targetWidth > 0) {
-            Context context = getContext();
-            Resources r = Resources.getSystem();
-            DisplayMetrics displayMetrics;
+        // Find the maximum font size that allows the text to fit in the desired bounds.
+        // We recursively ask the superclass TextView to measure itself with the given width
+        // constraint but an unbounded height (and lines), decreasing the font size until the
+        // resulting height (and/or maxLines) meets the given constraint.
+        final int targetHeight = MeasureSpec.getSize(heightMeasureSpec);
+        final int parentHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 
-            float size = mMaxTextSize;
-            float high = size;
-            float low = 0;
-
-            if (context != null) {
-                r = context.getResources();
-            }
-            displayMetrics = r.getDisplayMetrics();
-
-            mPaint.set(getPaint());
-            mPaint.setTextSize(size);
-
-            if ((mMaxLines == 1 && mPaint.measureText(text) > targetWidth)
-                    || getLineCount(text, mPaint, size, targetWidth, displayMetrics) > mMaxLines) {
-                size = getTextSize(text, mPaint, targetWidth, mMaxLines, low, high, mPrecision,
-                        displayMetrics);
-            }
-
-            if (size < mMinTextSize) {
-                size = mMinTextSize;
-            }
-
-            super.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+        // Save state
+        if (maxLines > 0) {
+            super.setMaxHeight(Integer.MAX_VALUE);
         }
+        super.setEllipsize(null);
+        // Find correct font size
+        final float size = findTextSize(1.0f, mTextSize, targetHeight, maxLines, widthMeasureSpec,
+                                        parentHeightMeasureSpec);
+
+        // Restore state
+        super.setEllipsize(mEllipsize);
+        if (maxLines > 0) {
+            super.setMaxLines(maxLines);
+        }
+
+        // Measure with correct font size
+        super.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     /**
-     * Recursive binary search to find the best size for the text
+     * Recursive binary search to find the best size for the text.
      */
-    private static float getTextSize(String text, TextPaint paint,
-                                     float targetWidth, int maxLines,
-                                     float low, float high, float precision,
-                                     DisplayMetrics displayMetrics) {
+    private float findTextSize(float low, float high, int targetHeight, int targetLines,
+                               int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
+        if ((high - low) < mPrecision) {
+            return low;
+        }
+
         float mid = (low + high) / 2.0f;
-        int lineCount = 1;
-        StaticLayout layout = null;
 
-        paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid,
-                displayMetrics));
+        super.setTextSize(TypedValue.COMPLEX_UNIT_PX, mid);
+        super.onMeasure(parentWidthMeasureSpec, parentHeightMeasureSpec);
 
-        if (maxLines != 1) {
-            layout = new StaticLayout(text, paint, (int)targetWidth, Layout.Alignment.ALIGN_NORMAL,
-                    1.0f, 0.0f, true);
-            lineCount = layout.getLineCount();
-        }
+        final int height = getMeasuredHeight();
+        final int lineCount = getLineCount();
 
-        if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid +
-                " target=" + targetWidth + " maxLines=" + maxLines + " lineCount=" + lineCount);
-
-        if (lineCount > maxLines) {
-            return getTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
-                    displayMetrics);
-        }
-        else if (lineCount < maxLines) {
-            return getTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
-                    displayMetrics);
-        }
-        else {
-            float maxLineWidth = 0;
-            if (maxLines == 1) {
-                maxLineWidth = paint.measureText(text);
-            } else {
-                for (int i = 0; i < lineCount; i++) {
-                    if (layout.getLineWidth(i) > maxLineWidth) {
-                        maxLineWidth = layout.getLineWidth(i);
-                    }
-                }
-            }
-
-            if ((high - low) < precision) {
-                return low;
-            } else if (maxLineWidth > targetWidth) {
-                return getTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
-                        displayMetrics);
-            } else if (maxLineWidth < targetWidth) {
-                return getTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
-                        displayMetrics);
-            } else {
-                return mid;
-            }
+        if (tooTall(targetHeight, height, targetLines, lineCount)) {
+            return findTextSize(low, mid, targetHeight, targetLines, parentWidthMeasureSpec,
+                                parentHeightMeasureSpec);
+        } else if (tooShort(targetHeight, height, targetLines, lineCount)) {
+            return findTextSize(mid, high, targetHeight, targetLines, parentWidthMeasureSpec,
+                                parentHeightMeasureSpec);
+        } else {
+            return mid;
         }
     }
 
-    private static int getLineCount(String text, TextPaint paint, float size, float width,
-                                    DisplayMetrics displayMetrics) {
-        paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, size,
-                displayMetrics));
-        StaticLayout layout = new StaticLayout(text, paint, (int)width,
-                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-        return layout.getLineCount();
+    private static boolean tooTall(int targetHeight, int measuredHeight, int targetLines,
+                                   int lineCount) {
+        return (targetHeight > 0 && measuredHeight > targetHeight) ||
+               (targetLines > 0 && lineCount > targetLines);
     }
 
-    @Override
-    protected void onTextChanged(final CharSequence text, final int start,
-                                 final int lengthBefore, final int lengthAfter) {
-        super.onTextChanged(text, start, lengthBefore, lengthAfter);
-        refitText();
+    private static boolean tooShort(int targetHeight, int measuredHeight, int targetLines,
+                                    int lineCount) {
+        return Implication(targetHeight > 0, measuredHeight < targetHeight) && Implication(
+                targetLines > 0, lineCount <= targetLines);
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if (w != oldw) {
-            refitText();
-        }
+    /**
+     * material implication (p -> q)
+     */
+    private static boolean Implication(boolean p, boolean q) {
+        return !p || q;
     }
 }
