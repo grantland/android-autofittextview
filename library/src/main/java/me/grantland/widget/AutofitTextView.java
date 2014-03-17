@@ -66,7 +66,7 @@ public class AutofitTextView extends TextView {
                     0);
             sizeToFit = ta.getBoolean(R.styleable.AutofitTextView_sizeToFit, sizeToFit);
             minTextSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_minTextSize,
-                    minTextSize);
+                                                   minTextSize);
             precision = ta.getFloat(R.styleable.AutofitTextView_precision, precision);
             ta.recycle();
         }
@@ -88,15 +88,16 @@ public class AutofitTextView extends TextView {
     }
 
     /**
-     * Sets the property of this field (singleLine, to automatically resize the text to fit its constraints.
+     * Sets the property of this field (singleLine, to automatically resize the text to fit its
+     * constraints.
      */
     public void setSizeToFit() {
         setSizeToFit(true);
     }
 
     /**
-     * If true, the text will automatically be resized to fit its constraints; if false, it will
-     * act like a normal TextView.
+     * If true, the text will automatically be resized to fit its constraints; if false, it will act
+     * like a normal TextView.
      *
      * @param sizeToFit
      */
@@ -146,9 +147,8 @@ public class AutofitTextView extends TextView {
      * Set the minimum text size to a given unit and value. See TypedValue for the possible
      * dimension units.
      *
-     * @param unit The desired dimension unit.
+     * @param unit    The desired dimension unit.
      * @param minSize The desired size in the given units.
-     *
      * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
      */
     public void setMinTextSize(int unit, float minSize) {
@@ -167,7 +167,6 @@ public class AutofitTextView extends TextView {
      * is adjusted based on the current density and user font size preference.
      *
      * @param minSize The scaled pixel size.
-     *
      * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
      */
     public void setMinTextSize(int minSize) {
@@ -241,14 +240,15 @@ public class AutofitTextView extends TextView {
             return;
         }
 
-        if (mMaxLines <= 0) {
-            // Don't auto-size since there's no limit on lines.
+        if (mMaxTextSize == 0) {
+            // Don't resize until a max font size is available.
             return;
         }
 
-        String text = getText().toString();
         int targetWidth = getWidth() - getPaddingLeft() - getPaddingRight();
-        if (targetWidth > 0) {
+        int targetHeight = getHeight() - getPaddingTop() - getPaddingBottom();
+
+        if (targetWidth > 0 || targetHeight > 0) {
             Context context = getContext();
             Resources r = Resources.getSystem();
             DisplayMetrics displayMetrics;
@@ -265,11 +265,7 @@ public class AutofitTextView extends TextView {
             mPaint.set(getPaint());
             mPaint.setTextSize(size);
 
-            if ((mMaxLines == 1 && mPaint.measureText(text) > targetWidth)
-                    || getLineCount(text, mPaint, size, targetWidth, displayMetrics) > mMaxLines) {
-                size = getTextSize(text, mPaint, targetWidth, mMaxLines, low, high, mPrecision,
-                        displayMetrics);
-            }
+            size = getTextSize(low, high, targetWidth, targetHeight, displayMetrics);
 
             if (size < mMinTextSize) {
                 size = mMinTextSize;
@@ -282,67 +278,60 @@ public class AutofitTextView extends TextView {
     /**
      * Recursive binary search to find the best size for the text
      */
-    private static float getTextSize(String text, TextPaint paint,
-                                     float targetWidth, int maxLines,
-                                     float low, float high, float precision,
-                                     DisplayMetrics displayMetrics) {
+    private float getTextSize(float low, float high, int targetWidth, int targetHeight,
+                              DisplayMetrics displayMetrics) {
         float mid = (low + high) / 2.0f;
-        int lineCount = 1;
-        StaticLayout layout = null;
+        int lineCount = -1;
+        int height = -1;
+        int width = -1;
+        StaticLayout layout;
 
-        paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, mid,
-                displayMetrics));
+        layout = getLayout(mid, targetWidth, displayMetrics);
+        lineCount = layout.getLineCount();
+        width = layout.getWidth();
+        height = layout.getHeight();
 
-        if (maxLines != 1) {
-            layout = new StaticLayout(text, paint, (int)targetWidth, Layout.Alignment.ALIGN_NORMAL,
-                    1.0f, 0.0f, true);
-            lineCount = layout.getLineCount();
-        }
+        if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid + " targetWidth=" +
+                             targetWidth + " targetHeight=" + targetHeight + " maxLines=" +
+                             mMaxLines + " lineCount=" + lineCount);
 
-        if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid +
-                " target=" + targetWidth + " maxLines=" + maxLines + " lineCount=" + lineCount);
-
-        if (lineCount > maxLines) {
-            return getTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
-                    displayMetrics);
-        }
-        else if (lineCount < maxLines) {
-            return getTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
-                    displayMetrics);
-        }
-        else {
-            float maxLineWidth = 0;
-            if (maxLines == 1) {
-                maxLineWidth = paint.measureText(text);
-            } else {
-                for (int i = 0; i < lineCount; i++) {
-                    if (layout.getLineWidth(i) > maxLineWidth) {
-                        maxLineWidth = layout.getLineWidth(i);
-                    }
-                }
+        if (mMaxLines > 0) {
+            // We have a maxLines constraint
+            if (lineCount > mMaxLines) {
+                // Too many lines; try smaller font
+                return getTextSize(low, mid, targetWidth, targetHeight, displayMetrics);
+            } else if (lineCount < mMaxLines) {
+                // More lines available; try larger font
+                return getTextSize(mid, high, targetWidth, targetHeight, displayMetrics);
             }
+        }
 
-            if ((high - low) < precision) {
-                return low;
-            } else if (maxLineWidth > targetWidth) {
-                return getTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
-                        displayMetrics);
-            } else if (maxLineWidth < targetWidth) {
-                return getTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
-                        displayMetrics);
+
+        // Max lines constraint is met; now satisfy width and constraints, if any
+        if (targetWidth > 0 && targetHeight > 0) {
+            if (width > targetWidth || height > targetHeight) {
+                // Too wide or too tall; try smaller font
+                if ((high - low) < mPrecision)
+                    return low;
+                else
+                    return getTextSize(low, mid, targetWidth, targetHeight, displayMetrics);
             } else {
-                return mid;
+                // More width and height available; try larger font
+                if ((high - low) < mPrecision)
+                    return low;
+                else
+                    return getTextSize(mid, high, targetWidth, targetHeight, displayMetrics);
             }
+        } else {
+            return mid;
         }
     }
 
-    private static int getLineCount(String text, TextPaint paint, float size, float width,
-                                    DisplayMetrics displayMetrics) {
-        paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, size,
-                displayMetrics));
-        StaticLayout layout = new StaticLayout(text, paint, (int)width,
-                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-        return layout.getLineCount();
+    private StaticLayout getLayout(float size, int width, DisplayMetrics displayMetrics) {
+        mPaint.setTextSize(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, size, displayMetrics));
+        return new StaticLayout(getText(), mPaint, width, Layout.Alignment.ALIGN_CENTER,
+                                1.0f, 0.0f, true);
     }
 
     @Override
@@ -355,7 +344,7 @@ public class AutofitTextView extends TextView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if (w != oldw) {
+        if (w != oldw || h != oldh) {
             refitText();
         }
     }
