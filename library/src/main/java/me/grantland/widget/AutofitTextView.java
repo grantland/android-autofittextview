@@ -14,6 +14,7 @@ import me.grantland.autofittextview.R;
  * A TextView that resizes it's text to be no larger than the width of the view.
  *
  * @author Grantland Chew <grantlandchew@gmail.com>
+ * @author David R. Bild <drbild@willbild.com>
  */
 public class AutofitTextView extends TextView {
 
