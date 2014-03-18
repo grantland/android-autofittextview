@@ -109,6 +109,15 @@ public class AutofitTextView extends TextView {
      * {@inheritDoc}
      */
     @Override
+    public void setTextAppearance(Context context, int resid) {
+        super.setTextAppearance(context, resid);
+        setRawTextSize(super.getTextSize());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public float getTextSize() {
         return mTextSize;
     }
