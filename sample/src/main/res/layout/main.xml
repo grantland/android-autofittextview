@@ -40,7 +40,7 @@
             android:text="@string/example"
             android:textSize="50sp"
             android:gravity="center"
-            android:singleLine="true"
+            android:maxLines="1"
             autofit:minTextSize="8sp"
             />
     </LinearLayout>
