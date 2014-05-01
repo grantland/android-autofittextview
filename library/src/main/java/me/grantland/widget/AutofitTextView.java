@@ -296,11 +296,19 @@ public class AutofitTextView extends TextView {
             super.setMaxHeight(Integer.MAX_VALUE);
         }
         super.setEllipsize(null);
+        Drawable background = getBackground();
+        if (background != null) {
+            setBackgroundDrawable(null);
+        }
+
         // Find correct font size
         final float size = findTextSize(1.0f, mTextSize, targetHeight, maxLines, widthMeasureSpec,
                                         parentHeightMeasureSpec);
 
         // Restore state
+        if (background != null) {
+            setBackgroundDrawable(null);
+        }
         super.setEllipsize(mEllipsize);
         if (maxLines > 0) {
             super.setMaxLines(maxLines);
