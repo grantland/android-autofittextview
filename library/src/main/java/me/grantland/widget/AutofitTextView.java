@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -246,7 +247,11 @@ public class AutofitTextView extends TextView {
             return;
         }
 
-        String text = getText().toString();
+        CharSequence text = getText();
+        TransformationMethod method = getTransformationMethod();
+        if (method != null) {
+            text = method.getTransformation(text, this);
+        }
         int targetWidth = getWidth() - getPaddingLeft() - getPaddingRight();
         if (targetWidth > 0) {
             Context context = getContext();
@@ -265,7 +270,7 @@ public class AutofitTextView extends TextView {
             mPaint.set(getPaint());
             mPaint.setTextSize(size);
 
-            if ((mMaxLines == 1 && mPaint.measureText(text) > targetWidth)
+            if ((mMaxLines == 1 && mPaint.measureText(text, 0, text.length()) > targetWidth)
                     || getLineCount(text, mPaint, size, targetWidth, displayMetrics) > mMaxLines) {
                 size = getTextSize(text, mPaint, targetWidth, mMaxLines, low, high, mPrecision,
                         displayMetrics);
@@ -282,7 +287,7 @@ public class AutofitTextView extends TextView {
     /**
      * Recursive binary search to find the best size for the text
      */
-    private static float getTextSize(String text, TextPaint paint,
+    private static float getTextSize(CharSequence text, TextPaint paint,
                                      float targetWidth, int maxLines,
                                      float low, float high, float precision,
                                      DisplayMetrics displayMetrics) {
@@ -313,7 +318,7 @@ public class AutofitTextView extends TextView {
         else {
             float maxLineWidth = 0;
             if (maxLines == 1) {
-                maxLineWidth = paint.measureText(text);
+                maxLineWidth = paint.measureText(text, 0, text.length());
             } else {
                 for (int i = 0; i < lineCount; i++) {
                     if (layout.getLineWidth(i) > maxLineWidth) {
@@ -336,7 +341,7 @@ public class AutofitTextView extends TextView {
         }
     }
 
-    private static int getLineCount(String text, TextPaint paint, float size, float width,
+    private static int getLineCount(CharSequence text, TextPaint paint, float size, float width,
                                     DisplayMetrics displayMetrics) {
         paint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, size,
                 displayMetrics));
