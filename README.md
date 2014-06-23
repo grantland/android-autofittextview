@@ -13,6 +13,29 @@ dependencies {
 }
 ```
 
+Enable any View extending TextView in code:
+
+```
+AutofitHelper.create(textView);
+```
+
+Enable any View extending TextView in XML:
+
+```
+<me.grantland.widget.AutofitLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        />
+</me.grantland.widget.AutofitLayout>
+```
+
+Use the built in Widget in code or XML:
+
 ```
 <me.grantland.widget.AutofitTextView
     android:layout_width="match_parent"
