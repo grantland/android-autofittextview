@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import me.grantland.autofittextview.R;
 
 /**
- * A helper class to enable automatically resizing {@link TextView}`s `textSize` to fit within its
- * bounds.
+ * A helper class to enable automatically resizing {@link TextView}`s <code>textSize</code> to fit
+ * within its bounds.
  *
- * Created by Grantland Chew on 6/20/14.
+ * @attr ref R.styleable.AutofitTextView_sizeToFit
+ * @attr ref R.styleable.AutofitTextView_minTextSize
+ * @attr ref R.styleable.AutofitTextView_precision
  */
 public class AutofitHelper {
 
@@ -38,14 +40,26 @@ public class AutofitHelper {
     // How precise we want to be when reaching the target textWidth size
     private static final float DEFAULT_PRECISION = 0.5f;
 
+    /**
+     * Creates a new instance of {@link AutofitHelper} that wraps a {@link TextView} and enables
+     * automatically sizing the text to fit.
+     */
     public static AutofitHelper create(TextView view) {
         return create(view, null, 0);
     }
 
+    /**
+     * Creates a new instance of {@link AutofitHelper} that wraps a {@link TextView} and enables
+     * automatically sizing the text to fit.
+     */
     public static AutofitHelper create(TextView view, AttributeSet attrs) {
         return create(view, attrs, 0);
     }
 
+    /**
+     * Creates a new instance of {@link AutofitHelper} that wraps a {@link TextView} and enables
+     * automatically sizing the text to fit.
+     */
     public static AutofitHelper create(TextView view, AttributeSet attrs, int defStyle) {
         AutofitHelper helper = new AutofitHelper(view);
         boolean sizeToFit = true;
@@ -529,8 +543,8 @@ public class AutofitHelper {
      */
     public interface OnTextSizeChangeListener {
         /**
-         * This method is called to notify you that the size of the text has changed  to `textSize`
-         * from `oldTextSize`.
+         * This method is called to notify you that the size of the text has changed  to
+         * <code>textSize</code> from <code>oldTextSize</code>.
          */
         public void onTextSizeChange(float textSize, float oldTextSize);
     }

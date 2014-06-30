@@ -8,7 +8,9 @@ import android.widget.TextView;
 /**
  * A TextView that re-sizes its text to be no larger than the width of the view.
  *
- * @author Grantland Chew <grantlandchew@gmail.com>
+ * @attr ref R.styleable.AutofitTextView_sizeToFit
+ * @attr ref R.styleable.AutofitTextView_minTextSize
+ * @attr ref R.styleable.AutofitTextView_precision
  */
 public class AutofitTextView extends TextView implements AutofitHelper.OnTextSizeChangeListener {
 
@@ -70,7 +72,7 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     }
 
     /**
-     * @return the AutofitHelper for this View.
+     * @return the {@link AutofitHelper} for this View.
      */
     public AutofitHelper getAutofitHelper() {
         return mHelper;

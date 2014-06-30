@@ -16,7 +16,9 @@ import me.grantland.autofittextview.R;
 /**
  * A ViewGroup that re-sizes the text of it's children to be no larger than the width of the view.
  *
- * Created by Grantland Chew on 6/21/14.
+ * @attr ref R.styleable.AutofitTextView_sizeToFit
+ * @attr ref R.styleable.AutofitTextView_minTextSize
+ * @attr ref R.styleable.AutofitTextView_precision
  */
 public class AutofitLayout extends FrameLayout {
 
@@ -79,14 +81,14 @@ public class AutofitLayout extends FrameLayout {
     }
 
     /**
-     * @return the AutofitHelper for this child View.
+     * @return the {@link AutofitHelper} for this child View.
      */
     public AutofitHelper getAutofitHelper(TextView textView) {
         return mHelpers.get(textView);
     }
 
     /**
-     * @return the AutofitHelper for this child View.
+     * @return the {@link AutofitHelper} for this child View.
      */
     public AutofitHelper getAutofitHelper(int index) {
         return mHelpers.get(getChildAt(index));
