@@ -9,7 +9,7 @@ A TextView that automatically resizes text to fit perfectly within its bounds.
 
 ```
 dependencies {
-    compile 'me.grantland:autofittextview:0.1.+'
+    compile 'me.grantland:autofittextview:0.2.+'
 }
 ```
 
