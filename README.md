@@ -1,5 +1,7 @@
 # AutoFitTextView
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.grantland/autofittextview/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.grantland/autofittextview)
+
 A TextView that automatically resizes text to fit perfectly within its bounds.
 
 ![Example Image](/website/static/autofittextview.gif?raw=true)
