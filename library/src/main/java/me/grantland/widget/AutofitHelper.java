@@ -20,8 +20,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import me.grantland.autofittextview.R;
-
 /**
  * A helper class to enable automatically resizing {@link TextView}`s <code>textSize</code> to fit
  * within its bounds.

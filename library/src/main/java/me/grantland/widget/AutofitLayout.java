@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import java.util.WeakHashMap;
 
-import me.grantland.autofittextview.R;
-
 /**
  * A ViewGroup that re-sizes the text of it's children to be no larger than the width of the view.
  *
