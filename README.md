@@ -9,7 +9,7 @@ A TextView that automatically resizes text to fit perfectly within its bounds.
 
 ## Usage
 
-```
+```cson
 dependencies {
     compile 'me.grantland:autofittextview:0.2.+'
 }
@@ -17,13 +17,13 @@ dependencies {
 
 Enable any View extending TextView in code:
 
-```
+```java
 AutofitHelper.create(textView);
 ```
 
 Enable any View extending TextView in XML:
 
-```
+```xml
 <me.grantland.widget.AutofitLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -38,7 +38,7 @@ Enable any View extending TextView in XML:
 
 Use the built in Widget in code or XML:
 
-```
+```xml
 <me.grantland.widget.AutofitTextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
