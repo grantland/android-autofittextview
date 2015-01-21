@@ -77,7 +77,7 @@ public class AutofitHelper {
             precision = ta.getFloat(R.styleable.AutofitTextView_precision, precision);
             ta.recycle();
 
-            helper.setMinTextSize(minTextSize)
+            helper.setMinTextSize(TypedValue.COMPLEX_UNIT_PX, minTextSize)
                 .setPrecision(precision);
         }
         helper.setEnabled(sizeToFit);
