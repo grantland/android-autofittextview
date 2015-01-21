@@ -6,7 +6,7 @@ import android.util.TypedValue;
 import android.widget.TextView;
 
 /**
- * A TextView that re-sizes its text to be no larger than the width of the view.
+ * A {@link TextView} that re-sizes its text to be no larger than the width of the view.
  *
  * @attr ref R.styleable.AutofitTextView_sizeToFit
  * @attr ref R.styleable.AutofitTextView_minTextSize
@@ -72,14 +72,14 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     }
 
     /**
-     * @return the {@link AutofitHelper} for this View.
+     * Returns the {@link AutofitHelper} for this View.
      */
     public AutofitHelper getAutofitHelper() {
         return mHelper;
     }
 
     /**
-     * @return whether or not the text will be automatically re-sized to fit its constraints.
+     * Returns whether or not the text will be automatically re-sized to fit its constraints.
      */
     public boolean isSizeToFit() {
         return mHelper.isEnabled();
@@ -104,7 +104,7 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     }
 
     /**
-     * @return the maximum size (in pixels) of the text in this View.
+     * Returns the maximum size (in pixels) of the text in this View.
      */
     public float getMaxTextSize() {
         return mHelper.getMaxTextSize();
@@ -136,7 +136,7 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     }
 
     /**
-     * @return the minimum size (in pixels) of the text in this View.
+     * Returns the minimum size (in pixels) of the text in this View.
      */
     public float getMinTextSize() {
         return mHelper.getMinTextSize();
@@ -168,7 +168,7 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     }
 
     /**
-     * @return the amount of precision used to calculate the correct text size to fit within its
+     * Returns the amount of precision used to calculate the correct text size to fit within its
      * bounds.
      */
     public float getPrecision() {

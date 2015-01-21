@@ -12,7 +12,8 @@ import android.widget.TextView;
 import java.util.WeakHashMap;
 
 /**
- * A ViewGroup that re-sizes the text of it's children to be no larger than the width of the view.
+ * A {@link ViewGroup} that re-sizes the text of it's children to be no larger than the width of the
+ * view.
  *
  * @attr ref R.styleable.AutofitTextView_sizeToFit
  * @attr ref R.styleable.AutofitTextView_minTextSize
@@ -79,14 +80,14 @@ public class AutofitLayout extends FrameLayout {
     }
 
     /**
-     * @return the {@link AutofitHelper} for this child View.
+     * Returns the {@link AutofitHelper} for this child View.
      */
     public AutofitHelper getAutofitHelper(TextView textView) {
         return mHelpers.get(textView);
     }
 
     /**
-     * @return the {@link AutofitHelper} for this child View.
+     * Returns the {@link AutofitHelper} for this child View.
      */
     public AutofitHelper getAutofitHelper(int index) {
         return mHelpers.get(getChildAt(index));

@@ -21,7 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
- * A helper class to enable automatically resizing {@link TextView}`s <code>textSize</code> to fit
+ * A helper class to enable automatically resizing {@link TextView}`s {@code textSize} to fit
  * within its bounds.
  *
  * @attr ref R.styleable.AutofitTextView_sizeToFit
@@ -39,7 +39,7 @@ public class AutofitHelper {
     private static final float DEFAULT_PRECISION = 0.5f;
 
     /**
-     * Creates a new instance of {@link AutofitHelper} that wraps a {@link TextView} and enables
+     * Creates a new instance of {@code AutofitHelper} that wraps a {@link TextView} and enables
      * automatically sizing the text to fit.
      */
     public static AutofitHelper create(TextView view) {
@@ -47,7 +47,7 @@ public class AutofitHelper {
     }
 
     /**
-     * Creates a new instance of {@link AutofitHelper} that wraps a {@link TextView} and enables
+     * Creates a new instance of {@code AutofitHelper} that wraps a {@link TextView} and enables
      * automatically sizing the text to fit.
      */
     public static AutofitHelper create(TextView view, AttributeSet attrs) {
@@ -55,7 +55,7 @@ public class AutofitHelper {
     }
 
     /**
-     * Creates a new instance of {@link AutofitHelper} that wraps a {@link TextView} and enables
+     * Creates a new instance of {@code AutofitHelper} that wraps a {@link TextView} and enables
      * automatically sizing the text to fit.
      */
     public static AutofitHelper create(TextView view, AttributeSet attrs, int defStyle) {
@@ -253,8 +253,8 @@ public class AutofitHelper {
     }
 
     /**
-     * Adds a {@link OnTextSizeChangeListener} to the list of those whose methods are called
-     * whenever this {@link TextView}'s textSize changes.
+     * Adds an {@link OnTextSizeChangeListener} to the list of those whose methods are called
+     * whenever the {@link TextView}'s {@code textSize} changes.
      */
     public AutofitHelper addOnTextSizeChangeListener(OnTextSizeChangeListener listener) {
         if (mListeners == null) {
@@ -266,7 +266,7 @@ public class AutofitHelper {
 
     /**
      * Removes the specified {@link OnTextSizeChangeListener} from the list of those whose methods
-     * are called whenever this {@link TextView}'s textSize changes.
+     * are called whenever the {@link TextView}'s {@code textSize} changes.
      */
     public AutofitHelper removeOnTextSizeChangeListener(OnTextSizeChangeListener listener) {
         if (mListeners != null) {
@@ -276,7 +276,7 @@ public class AutofitHelper {
     }
 
     /**
-     * @return the amount of precision used to calculate the correct text size to fit within its
+     * Returns the amount of precision used to calculate the correct text size to fit within its
      * bounds.
      */
     public float getPrecision() {
@@ -299,7 +299,7 @@ public class AutofitHelper {
     }
 
     /**
-     * @return the minimum size (in pixels) of the text.
+     * Returns the minimum size (in pixels) of the text.
      */
     public float getMinTextSize() {
         return mMinTextSize;
@@ -347,7 +347,7 @@ public class AutofitHelper {
     }
 
     /**
-     * @return the maximum size (in pixels) of the text.
+     * Returns the maximum size (in pixels) of the text.
      */
     public float getMaxTextSize() {
         return mMaxTextSize;
@@ -414,7 +414,7 @@ public class AutofitHelper {
     }
 
     /**
-     * @return whether or not automatically resizing text is enabled.
+     * Returns whether or not automatically resizing text is enabled.
      */
     public boolean isEnabled() {
         return mEnabled;
@@ -443,8 +443,9 @@ public class AutofitHelper {
     }
 
     /**
+     * Returns the original text size of the View.
+     *
      * @see TextView#getTextSize()
-     * @return the original text size of the View.
      */
     public float getTextSize() {
         return mTextSize;
@@ -536,13 +537,13 @@ public class AutofitHelper {
     }
 
     /**
-     * When an object of a type is attached to an AutofitHelper, its methods will be called when the
-     * textSize is changed.
+     * When an object of a type is attached to an {@code AutofitHelper}, its methods will be called
+     * when the {@code textSize} is changed.
      */
     public interface OnTextSizeChangeListener {
         /**
-         * This method is called to notify you that the size of the text has changed  to
-         * <code>textSize</code> from <code>oldTextSize</code>.
+         * This method is called to notify you that the size of the text has changed to
+         * {@code textSize} from {@code oldTextSize}.
          */
         public void onTextSizeChange(float textSize, float oldTextSize);
     }
