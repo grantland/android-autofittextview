@@ -158,6 +158,10 @@ public class AutofitHelper {
                 " target=" + targetWidth + " maxLines=" + maxLines + " lineCount=" + lineCount);
 
         if (lineCount > maxLines) {
+            // For the case that `text` has more newline characters than `maxLines`.
+            if ((high - low) < precision) {
+                return low;
+            }
             return getAutofitTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
                     displayMetrics);
         }
