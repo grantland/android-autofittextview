@@ -124,8 +124,8 @@ public class AutofitHelper {
 
         if ((maxLines == 1 && paint.measureText(text, 0, text.length()) > targetWidth)
                 || getLineCount(text, paint, size, targetWidth, displayMetrics) > maxLines) {
-            size = getAutofitTextSize(text, paint, targetWidth, maxLines, low, high, precision,
-                    displayMetrics);
+            size = getAutofitTextSize(text, paint, targetWidth, maxLines, minTextSize, low, high,
+                    precision, displayMetrics);
         }
 
         if (size < minTextSize) {
@@ -139,8 +139,8 @@ public class AutofitHelper {
      * Recursive binary search to find the best size for the text.
      */
     private static float getAutofitTextSize(CharSequence text, TextPaint paint,
-            float targetWidth, int maxLines, float low, float high, float precision,
-            DisplayMetrics displayMetrics) {
+            float targetWidth, int maxLines, float minTextSize, float low, float high,
+            float precision, DisplayMetrics displayMetrics) {
         float mid = (low + high) / 2.0f;
         int lineCount = 1;
         StaticLayout layout = null;
@@ -154,16 +154,27 @@ public class AutofitHelper {
             lineCount = layout.getLineCount();
         }
 
+        int lineBreakCount = 0;
+        for (int i = 0, j = text.length(); i < j; i++) {
+            if (text.charAt(i) == '\n') {
+                lineBreakCount++;
+            }
+        }
+
+        if (lineBreakCount + 1 > maxLines) {
+            return minTextSize;
+        }
+
         if (SPEW) Log.d(TAG, "low=" + low + " high=" + high + " mid=" + mid +
                 " target=" + targetWidth + " maxLines=" + maxLines + " lineCount=" + lineCount);
 
         if (lineCount > maxLines) {
-            return getAutofitTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
-                    displayMetrics);
+            return getAutofitTextSize(text, paint, targetWidth, maxLines, minTextSize, low, mid,
+                    precision, displayMetrics);
         }
         else if (lineCount < maxLines) {
-            return getAutofitTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
-                    displayMetrics);
+            return getAutofitTextSize(text, paint, targetWidth, maxLines, minTextSize, mid, high,
+                    precision, displayMetrics);
         }
         else {
             float maxLineWidth = 0;
@@ -180,11 +191,11 @@ public class AutofitHelper {
             if ((high - low) < precision) {
                 return low;
             } else if (maxLineWidth > targetWidth) {
-                return getAutofitTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
-                        displayMetrics);
+                return getAutofitTextSize(text, paint, targetWidth, maxLines, minTextSize, low, mid,
+                        precision, displayMetrics);
             } else if (maxLineWidth < targetWidth) {
-                return getAutofitTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
-                        displayMetrics);
+                return getAutofitTextSize(text, paint, targetWidth, maxLines, minTextSize, mid, high,
+                        precision, displayMetrics);
             } else {
                 return mid;
             }
