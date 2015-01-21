@@ -3,8 +3,4 @@
     package="me.grantland.widget"
     android:versionCode="1"
     android:versionName="1.0" >
-
-    <application
-        android:allowBackup="true"/>
-
 </manifest> 
