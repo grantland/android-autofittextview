@@ -239,8 +239,7 @@ public class AutofitHelper {
 
     private TextWatcher mTextWatcher = new AutofitTextWatcher();
 
-    private View.OnLayoutChangeListener mOnLayoutChangeListener =
-            new AutofitOnLayoutChangeListener();
+    private View.OnLayoutChangeListener mOnLayoutChangeListener;
 
     private AutofitHelper(TextView view) {
         final Context context = view.getContext();
@@ -433,12 +432,31 @@ public class AutofitHelper {
 
             if (enabled) {
                 mTextView.addTextChangedListener(mTextWatcher);
-                mTextView.addOnLayoutChangeListener(mOnLayoutChangeListener);
+
+                if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    if (mOnLayoutChangeListener == null){
+                        mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
+                            @Override
+                            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                                autofit();
+                            }
+                        };
+                    }
+                    mTextView.addOnLayoutChangeListener(mOnLayoutChangeListener);
+                } else {
+                    if ( mTextView instanceof AutofitTextView)
+                        ((AutofitTextView) mTextView).setSizeListener(sizeListener);
+                }
 
                 autofit();
             } else {
                 mTextView.removeTextChangedListener(mTextWatcher);
-                mTextView.removeOnLayoutChangeListener(mOnLayoutChangeListener);
+                if ( android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    mTextView.removeOnLayoutChangeListener(mOnLayoutChangeListener);
+                } else {
+                    if ( mTextView instanceof AutofitTextView)
+                        ((AutofitTextView) mTextView).setSizeListener(null);
+                }
 
                 mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
             }
@@ -532,10 +550,9 @@ public class AutofitHelper {
         }
     }
 
-    private class AutofitOnLayoutChangeListener implements View.OnLayoutChangeListener {
-        @Override
-        public void onLayoutChange(View view, int left, int top, int right, int bottom,
-                int oldLeft, int oldTop, int oldRight, int oldBottom) {
+    private AutofitSizeChangedListener sizeListener = new AutofitSizeChangedListener();
+    private class AutofitSizeChangedListener implements AutofitTextView.AutofitSizeChangedListener {
+        public void onChange(){
             autofit();
         }
     }
