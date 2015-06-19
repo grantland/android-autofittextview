@@ -9,5 +9,7 @@
         <attr name="precision" format="float" />
         <!-- Defines whether to automatically resize text to fit to the view's bounds. -->
         <attr name="sizeToFit" format="boolean" />
+        <!-- Defines whether to automatically resize text to fit to the view's height bounds. -->
+        <attr name="heightToFit" format="boolean" />
     </declare-styleable>
 </resources>

@@ -61,6 +61,7 @@ public class AutofitHelper {
     public static AutofitHelper create(TextView view, AttributeSet attrs, int defStyle) {
         AutofitHelper helper = new AutofitHelper(view);
         boolean sizeToFit = true;
+        boolean heightToFit = false;
         if (attrs != null) {
             Context context = view.getContext();
             int minTextSize = (int) helper.getMinTextSize();
@@ -72,6 +73,7 @@ public class AutofitHelper {
                     defStyle,
                     0);
             sizeToFit = ta.getBoolean(R.styleable.AutofitTextView_sizeToFit, sizeToFit);
+            heightToFit = ta.getBoolean(R.styleable.AutofitTextView_heightToFit, heightToFit);
             minTextSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_minTextSize,
                     minTextSize);
             precision = ta.getFloat(R.styleable.AutofitTextView_precision, precision);
@@ -80,6 +82,7 @@ public class AutofitHelper {
             helper.setMinTextSize(TypedValue.COMPLEX_UNIT_PX, minTextSize)
                 .setPrecision(precision);
         }
+        helper.setHeightFitting(heightToFit);
         helper.setEnabled(sizeToFit);
 
         return helper;
@@ -128,11 +131,42 @@ public class AutofitHelper {
                     displayMetrics);
         }
 
-        if (size < minTextSize) {
-            size = minTextSize;
+        if (mIsHeightFitting) {
+            int targetHeight = view.getHeight() - view.getPaddingTop() - view.getPaddingTop();
+            if (targetHeight <= 0) {
+                if (size < minTextSize) {
+                    size = minTextSize;
+                }
+                view.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+                return;
+            }
+
+            float textHeight = getTextHeight(text, paint, targetWidth, size);
+            textHeight = getTextHeight(text, paint, targetWidth, size);
+            float heightRatio = targetHeight / textHeight;
+            float newSize = size * heightRatio;
+            if (newSize < size) {
+                size = newSize;
+            }
+
+            if (size < minTextSize) {
+                size = minTextSize;
+            }
         }
 
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+    }
+
+    /**
+     * Try to fit the text with current size to a static layout to calculate height needed
+     * by that text size.
+     * @note Can be put in a loop where text size is gradually decreased etc.
+     * @return float The height size required by the text.
+     */
+    private static float getTextHeight(CharSequence text, TextPaint paint, int width, float textSize) {
+        StaticLayout textHeightAdjuster = new StaticLayout(text, paint, width,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+        return textHeightAdjuster.getHeight();
     }
 
     /**
@@ -234,6 +268,7 @@ public class AutofitHelper {
 
     private boolean mEnabled;
     private boolean mIsAutofitting;
+    private static boolean mIsHeightFitting;
 
     private ArrayList<OnTextSizeChangeListener> mListeners;
 
@@ -418,7 +453,8 @@ public class AutofitHelper {
     }
 
     /**
-     * Returns whether or not automatically resizing text is enabled.
+     * Returns whether or not automatically resizing text
+     * by width and number of lines is enabled.
      */
     public boolean isEnabled() {
         return mEnabled;
@@ -443,6 +479,27 @@ public class AutofitHelper {
                 mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
             }
         }
+        return this;
+    }
+
+    /**
+     * Returns whether or not automatically resizing text
+     * by height is enabled.
+     * @return boolean True when height scaling is on.
+     */
+    public boolean isHeightFitting() {
+        return mIsHeightFitting;
+    }
+
+    /**
+     * Sets the state of automatically resizing by text fitting in height.
+     * Calls an autofit if it is already enabled.
+     * @param enabled The state to update the height fitting member
+     */
+    public AutofitHelper setHeightFitting(boolean enabled) {
+        mIsHeightFitting = enabled;
+        // Fit if required
+        setEnabled(mEnabled);
         return this;
     }
 
