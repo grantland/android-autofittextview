@@ -37,12 +37,20 @@ Enable any View extending TextView in XML:
 ```
 
 Use the built in Widget in code or XML:
+```xml
+<RootElement
+    xmlns:autofit="http://schemas.android.com/apk/res-auto"
+    ...
+```   
 
 ```xml
 <me.grantland.widget.AutofitTextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:singleLine="true"
+    android:maxLines="2"
+    android:textSize="40sp"
+    autofit:minTextSize="16sp"
     />
 ```
 
