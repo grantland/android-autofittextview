@@ -93,6 +93,34 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
         setSizeToFit(true);
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        sizeListener.onChange();
+    }
+
+
+    public void setSizeListener(AutofitSizeChangedListener sizeListener) {
+        if ( sizeListener == null)
+            sizeListener = AutofitTextView.AutofitSizeChangedListener.EmptyAutofitSizeChangedListener.getInstance();
+        this.sizeListener = sizeListener;
+    }
+
+    private AutofitSizeChangedListener sizeListener = AutofitSizeChangedListener.EmptyAutofitSizeChangedListener.getInstance();
+    public interface AutofitSizeChangedListener {
+        public void onChange();
+
+        public static class EmptyAutofitSizeChangedListener implements AutofitSizeChangedListener {
+
+            @Override
+            public void onChange() {}
+
+            private EmptyAutofitSizeChangedListener(){}
+
+            private static EmptyAutofitSizeChangedListener instance = new EmptyAutofitSizeChangedListener();
+            public static EmptyAutofitSizeChangedListener getInstance() { return instance;}
+        }
+    }
     /**
      * If true, the text will automatically be re-sized to fit its constraints; if false, it will
      * act like a normal TextView.
