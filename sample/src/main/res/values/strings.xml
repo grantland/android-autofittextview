@@ -6,6 +6,7 @@
     <string name="input_hint">text</string>
     <string name="label_normal">Normal:</string>
     <string name="label_autofit">Autofit:</string>
+    <string name="label_autofit_wrap">Autofit wrap:</string>
 
     <string name="example">This is an example</string>
 
