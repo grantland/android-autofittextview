@@ -42,6 +42,25 @@
             android:gravity="center"
             android:singleLine="true"
             autofit:minTextSize="8sp"
+
             />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_autofit_wrap"
+            />
+        <me.grantland.widget.AutofitTextView
+            android:id="@+id/output_autofit2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example"
+            android:textSize="50sp"
+            android:gravity="center"
+            android:singleLine="true"
+            autofit:minTextSize="8sp"
+            />
+
+
     </LinearLayout>
 </ScrollView>
