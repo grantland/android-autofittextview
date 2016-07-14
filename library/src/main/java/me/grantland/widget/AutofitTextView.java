@@ -104,6 +104,29 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     }
 
     /**
+     * Returns whether or not the text will be automatically re-sized to fit its height.
+     */
+    public boolean isHeightFitting() {
+        return mHelper.isHeightFitting();
+    }
+
+    /**
+     * Sets the property of this field (isHeightFitting), to automatically resize the text to fit
+     * its height.
+     */
+    public void setHeightFitting() {
+        setHeightFitting(true);
+    }
+
+    /**
+     * Enables automatic text resizing to fit the textview height
+     * @param isEnabled If true, the text will automatically be re-sized to fit its height
+     */
+    public void setHeightFitting(boolean isEnabled) {
+        mHelper.setHeightFitting(isEnabled);
+    }
+
+    /**
      * Returns the maximum size (in pixels) of the text in this View.
      */
     public float getMaxTextSize() {
