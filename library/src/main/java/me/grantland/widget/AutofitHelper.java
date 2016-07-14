@@ -132,7 +132,7 @@ public class AutofitHelper {
         }
 
         if (mIsHeightFitting) {
-            int targetHeight = view.getHeight() - view.getPaddingTop() - view.getPaddingTop();
+            int targetHeight = view.getHeight() - view.getPaddingTop() - view.getPaddingBottom();
             if (targetHeight <= 0) {
                 if (size < minTextSize) {
                     size = minTextSize;
@@ -142,7 +142,6 @@ public class AutofitHelper {
             }
 
             float textHeight = getTextHeight(text, paint, targetWidth, size);
-            textHeight = getTextHeight(text, paint, targetWidth, size);
             float heightRatio = targetHeight / textHeight;
             float newSize = size * heightRatio;
             if (newSize < size) {
