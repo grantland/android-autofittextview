@@ -15,14 +15,15 @@ import java.util.WeakHashMap;
  * A {@link ViewGroup} that re-sizes the text of it's children to be no larger than the width of the
  * view.
  *
- * @attr ref R.styleable.AutofitTextView_sizeToFit
+ * @attr ref R.styleable.AutofitTextView_autofitWidthEnabled
+ * @attr ref R.styleable.AutofitTextView_autofitHeightEnabled
  * @attr ref R.styleable.AutofitTextView_minTextSize
  * @attr ref R.styleable.AutofitTextView_precision
  */
 public class AutofitLayout extends FrameLayout {
 
-    private boolean mEnabled;
-    private boolean mIsHeightFitting;
+    private boolean mIsAutofitWidthEnabled;
+    private boolean mIsAutofitHeightEnabled;
     private float mMinTextSize;
     private float mPrecision;
     private WeakHashMap<View, AutofitHelper> mHelpers = new WeakHashMap<View, AutofitHelper>();
@@ -43,8 +44,8 @@ public class AutofitLayout extends FrameLayout {
     }
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
-        boolean sizeToFit = true;
-        boolean heightToFit = false;
+        boolean autofitWidthEnabled = true;
+        boolean autofitHeightEnabled = false;
         int minTextSize = -1;
         float precision = -1;
 
@@ -54,16 +55,18 @@ public class AutofitLayout extends FrameLayout {
                     R.styleable.AutofitTextView,
                     defStyle,
                     0);
-            sizeToFit = ta.getBoolean(R.styleable.AutofitTextView_sizeToFit, sizeToFit);
-            heightToFit = ta.getBoolean(R.styleable.AutofitTextView_heightToFit, heightToFit);
+            autofitWidthEnabled = ta.getBoolean(R.styleable.AutofitTextView_autofitWidthEnabled,
+                    autofitWidthEnabled);
+            autofitHeightEnabled = ta.getBoolean(R.styleable.AutofitTextView_autofitHeightEnabled,
+                    autofitHeightEnabled);
             minTextSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_minTextSize,
                     minTextSize);
             precision = ta.getFloat(R.styleable.AutofitTextView_precision, precision);
             ta.recycle();
         }
 
-        mEnabled = sizeToFit;
-        mIsHeightFitting = heightToFit;
+        mIsAutofitWidthEnabled = autofitWidthEnabled;
+        mIsAutofitHeightEnabled = autofitHeightEnabled;
         mMinTextSize = minTextSize;
         mPrecision = precision;
     }
@@ -73,8 +76,8 @@ public class AutofitLayout extends FrameLayout {
         super.addView(child, index, params);
         TextView textView = (TextView) child;
         AutofitHelper helper = AutofitHelper.create(textView);
-        helper.setHeightFitting(mIsHeightFitting);
-        helper.setEnabled(mEnabled);
+        helper.setAutofitWidthEnabled(mIsAutofitWidthEnabled);
+        helper.setAutofitHeightEnabled(mIsAutofitHeightEnabled);
         if (mPrecision > 0) {
             helper.setPrecision(mPrecision);
         }
