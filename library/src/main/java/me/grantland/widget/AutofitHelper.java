@@ -147,10 +147,10 @@ public class AutofitHelper {
             if (newSize < size) {
                 size = newSize;
             }
+        }
 
-            if (size < minTextSize) {
-                size = minTextSize;
-            }
+        if (size < minTextSize) {
+            size = minTextSize;
         }
 
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
