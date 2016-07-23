@@ -8,7 +8,8 @@ import android.widget.TextView;
 /**
  * A {@link TextView} that re-sizes its text to be no larger than the width of the view.
  *
- * @attr ref R.styleable.AutofitTextView_sizeToFit
+ * @attr ref R.styleable.AutofitTextView_autofitWidthEnabled
+ * @attr ref R.styleable.AutofitTextView_autofitHeightEnabled
  * @attr ref R.styleable.AutofitTextView_minTextSize
  * @attr ref R.styleable.AutofitTextView_precision
  */
@@ -81,49 +82,49 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     /**
      * Returns whether or not the text will be automatically re-sized to fit its constraints.
      */
-    public boolean isSizeToFit() {
-        return mHelper.isEnabled();
+    public boolean isAutofitWidthEnabled() {
+        return mHelper.isAutofitWidthEnabled();
     }
 
     /**
-     * Sets the property of this field (sizeToFit), to automatically resize the text to fit its
+     * Sets the property of this field (autofitWidthEnabled), to automatically resize the text to fit its
      * constraints.
      */
-    public void setSizeToFit() {
-        setSizeToFit(true);
+    public void setAutofitWidthEnabled() {
+        setAutofitWidthEnabled(true);
     }
 
     /**
      * If true, the text will automatically be re-sized to fit its constraints; if false, it will
      * act like a normal TextView.
      *
-     * @param sizeToFit
+     * @param autofitWidthEnabled
      */
-    public void setSizeToFit(boolean sizeToFit) {
-        mHelper.setEnabled(sizeToFit);
+    public void setAutofitWidthEnabled(boolean autofitWidthEnabled) {
+        mHelper.setAutofitWidthEnabled(autofitWidthEnabled);
     }
 
     /**
      * Returns whether or not the text will be automatically re-sized to fit its height.
      */
-    public boolean isHeightFitting() {
-        return mHelper.isHeightFitting();
+    public boolean isAutofitHeightEnabled() {
+        return mHelper.isAutofitHeightEnabled();
     }
 
     /**
-     * Sets the property of this field (isHeightFitting), to automatically resize the text to fit
+     * Sets the property of this field (autofitHeightEnabled), to automatically resize the text to fit
      * its height.
      */
-    public void setHeightFitting() {
-        setHeightFitting(true);
+    public void setAutofitHeightEnabled() {
+        setAutofitHeightEnabled(true);
     }
 
     /**
      * Enables automatic text resizing to fit the textview height
-     * @param isEnabled If true, the text will automatically be re-sized to fit its height
+     * @param autofitHeightEnabled If true, the text will automatically be re-sized to fit its height
      */
-    public void setHeightFitting(boolean isEnabled) {
-        mHelper.setHeightFitting(isEnabled);
+    public void setAutofitHeightEnabled(boolean autofitHeightEnabled) {
+        mHelper.setAutofitHeightEnabled(autofitHeightEnabled);
     }
 
     /**
