@@ -40,8 +40,10 @@
             android:text="@string/example"
             android:textSize="50sp"
             android:gravity="center"
-            android:singleLine="true"
+            android:maxLines="2"
             autofit:minTextSize="8sp"
-            />
+            android:drawableRight="@drawable/ic_launcher"
+            android:drawableEnd="@drawable/ic_launcher"
+            android:drawablePadding="8dp"/>
     </LinearLayout>
 </ScrollView>
