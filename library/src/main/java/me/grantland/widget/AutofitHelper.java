@@ -95,7 +95,7 @@ public class AutofitHelper {
             return;
         }
 
-        int targetWidth = view.getWidth() - view.getPaddingLeft() - view.getPaddingRight();
+        int targetWidth = view.getWidth() - view.getCompoundPaddingLeft() - view.getCompoundPaddingRight();
         if (targetWidth <= 0) {
             return;
         }
