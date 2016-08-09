@@ -95,7 +95,7 @@ public class AutofitHelper {
      * Re-sizes the textSize of the TextView so that the text fits within the bounds of the View.
      */
     private static void autofit(TextView view, TextPaint paint, float minTextSize, float maxTextSize,
-                                int maxLines, float precision, boolean mIsAutofitWidthEnabled, boolean mIsAutofitHeightEnabled) {
+                                int maxLines, float precision, boolean isAutofitWidthEnabled, boolean isAutofitHeightEnabled) {
         if (maxLines <= 0 || maxLines == Integer.MAX_VALUE) {
             // Don't auto-size since there's no limit on lines.
             return;
@@ -134,7 +134,7 @@ public class AutofitHelper {
                     displayMetrics);
         }
 
-        if (mIsAutofitHeightEnabled) {
+        if (isAutofitHeightEnabled) {
             int targetHeight = view.getHeight() - view.getPaddingTop() - view.getPaddingBottom();
             if (targetHeight > 0) {
                 float textHeight = getTextHeight(text, paint, targetWidth, size);
