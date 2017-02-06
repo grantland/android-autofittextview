@@ -68,8 +68,11 @@ public class AutofitLayout extends FrameLayout {
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         super.addView(child, index, params);
         TextView textView = (TextView) child;
-        AutofitHelper helper = AutofitHelper.create(textView)
+        AutofitHelper helper = null;
+
+        helper = AutofitHelper.create(textView)
                 .setEnabled(mEnabled);
+
         if (mPrecision > 0) {
             helper.setPrecision(mPrecision);
         }
@@ -77,6 +80,7 @@ public class AutofitLayout extends FrameLayout {
             helper.setMinTextSize(TypedValue.COMPLEX_UNIT_PX, mMinTextSize);
         }
         mHelpers.put(textView, helper);
+
     }
 
     /**

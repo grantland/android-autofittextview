@@ -60,7 +60,7 @@
                     android:gravity="center"
                     android:singleLine="true"
                     autofit:minTextSize="8sp"
-                    />
+                    autofit:fontname="Brotherina.otf"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

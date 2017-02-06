@@ -9,5 +9,7 @@
         <attr name="precision" format="float" />
         <!-- Defines whether to automatically resize text to fit to the view's bounds. -->
         <attr name="sizeToFit" format="boolean" />
+        <!--Can hold custom font, typeface font name-->
+        <attr name="fontname" format="string" />
     </declare-styleable>
 </resources>

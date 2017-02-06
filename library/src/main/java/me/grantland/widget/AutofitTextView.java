@@ -32,8 +32,8 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     }
 
     private void init(Context context, AttributeSet attrs, int defStyle) {
-        mHelper = AutofitHelper.create(this, attrs, defStyle)
-                .addOnTextSizeChangeListener(this);
+            mHelper = AutofitHelper.create(this, attrs, defStyle)
+                    .addOnTextSizeChangeListener(this);
     }
 
     // Getters and Setters
