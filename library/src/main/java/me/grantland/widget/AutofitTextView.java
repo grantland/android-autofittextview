@@ -1,6 +1,7 @@
 package me.grantland.widget;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
@@ -12,7 +13,9 @@ import android.widget.TextView;
  * @attr ref R.styleable.AutofitTextView_minTextSize
  * @attr ref R.styleable.AutofitTextView_precision
  */
-public class AutofitTextView extends TextView implements AutofitHelper.OnTextSizeChangeListener {
+public class AutofitTextView
+        extends AppCompatTextView
+        implements AutofitHelper.OnTextSizeChangeListener {
 
     private AutofitHelper mHelper;
 
@@ -115,7 +118,6 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
      * is adjusted based on the current density and user font size preference.
      *
      * @param size The scaled pixel size.
-     *
      * @attr ref android.R.styleable#TextView_textSize
      */
     public void setMaxTextSize(float size) {
@@ -128,7 +130,6 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
      *
      * @param unit The desired dimension unit.
      * @param size The desired size in the given units.
-     *
      * @attr ref android.R.styleable#TextView_textSize
      */
     public void setMaxTextSize(int unit, float size) {
@@ -147,7 +148,6 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
      * is adjusted based on the current density and user font size preference.
      *
      * @param minSize The scaled pixel size.
-     *
      * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
      */
     public void setMinTextSize(int minSize) {
@@ -158,9 +158,8 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
      * Set the minimum text size to a given unit and value. See TypedValue for the possible
      * dimension units.
      *
-     * @param unit The desired dimension unit.
+     * @param unit    The desired dimension unit.
      * @param minSize The desired size in the given units.
-     *
      * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
      */
     public void setMinTextSize(int unit, float minSize) {
