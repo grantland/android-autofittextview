@@ -24,9 +24,9 @@ import java.util.ArrayList;
  * A helper class to enable automatically resizing {@link TextView}`s {@code textSize} to fit
  * within its bounds.
  *
- * @attr ref R.styleable.AutofitTextView_sizeToFit
- * @attr ref R.styleable.AutofitTextView_minTextSize
- * @attr ref R.styleable.AutofitTextView_precision
+ * @attr ref R.styleable.AutofitTextView_autofit_sizeToFit
+ * @attr ref R.styleable.AutofitTextView_autofit_minTextSize
+ * @attr ref R.styleable.AutofitTextView_autofit_precision
  */
 public class AutofitHelper {
 
@@ -36,7 +36,7 @@ public class AutofitHelper {
     // Minimum size of the text in pixels
     private static final int DEFAULT_MIN_TEXT_SIZE = 8; //sp
     // How precise we want to be when reaching the target textWidth size
-    private static final float DEFAULT_PRECISION = 0.5f;
+    private static final float DEFAULT_autofit_precision = 0.5f;
 
     /**
      * Creates a new instance of {@code AutofitHelper} that wraps a {@link TextView} and enables
@@ -60,27 +60,27 @@ public class AutofitHelper {
      */
     public static AutofitHelper create(TextView view, AttributeSet attrs, int defStyle) {
         AutofitHelper helper = new AutofitHelper(view);
-        boolean sizeToFit = true;
+        boolean autofit_sizeToFit = true;
         if (attrs != null) {
             Context context = view.getContext();
-            int minTextSize = (int) helper.getMinTextSize();
-            float precision = helper.getPrecision();
+            int autofit_minTextSize = (int) helper.getautofit_minTextSize();
+            float autofit_precision = helper.getautofit_precision();
 
             TypedArray ta = context.obtainStyledAttributes(
                     attrs,
                     R.styleable.AutofitTextView,
                     defStyle,
                     0);
-            sizeToFit = ta.getBoolean(R.styleable.AutofitTextView_sizeToFit, sizeToFit);
-            minTextSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_minTextSize,
-                    minTextSize);
-            precision = ta.getFloat(R.styleable.AutofitTextView_precision, precision);
+            autofit_sizeToFit = ta.getBoolean(R.styleable.AutofitTextView_autofit_sizeToFit, autofit_sizeToFit);
+            autofit_minTextSize = ta.getDimensionPixelSize(R.styleable.AutofitTextView_autofit_minTextSize,
+                    autofit_minTextSize);
+            autofit_precision = ta.getFloat(R.styleable.AutofitTextView_autofit_precision, autofit_precision);
             ta.recycle();
 
-            helper.setMinTextSize(TypedValue.COMPLEX_UNIT_PX, minTextSize)
-                .setPrecision(precision);
+            helper.setautofit_minTextSize(TypedValue.COMPLEX_UNIT_PX, autofit_minTextSize)
+                .setautofit_precision(autofit_precision);
         }
-        helper.setEnabled(sizeToFit);
+        helper.setEnabled(autofit_sizeToFit);
 
         return helper;
     }
@@ -88,8 +88,8 @@ public class AutofitHelper {
     /**
      * Re-sizes the textSize of the TextView so that the text fits within the bounds of the View.
      */
-    private static void autofit(TextView view, TextPaint paint, float minTextSize, float maxTextSize,
-            int maxLines, float precision) {
+    private static void autofit(TextView view, TextPaint paint, float autofit_minTextSize, float maxTextSize,
+            int maxLines, float autofit_precision) {
         if (maxLines <= 0 || maxLines == Integer.MAX_VALUE) {
             // Don't auto-size since there's no limit on lines.
             return;
@@ -124,12 +124,12 @@ public class AutofitHelper {
 
         if ((maxLines == 1 && paint.measureText(text, 0, text.length()) > targetWidth)
                 || getLineCount(text, paint, size, targetWidth, displayMetrics) > maxLines) {
-            size = getAutofitTextSize(text, paint, targetWidth, maxLines, low, high, precision,
+            size = getAutofitTextSize(text, paint, targetWidth, maxLines, low, high, autofit_precision,
                     displayMetrics);
         }
 
-        if (size < minTextSize) {
-            size = minTextSize;
+        if (size < autofit_minTextSize) {
+            size = autofit_minTextSize;
         }
 
         view.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
@@ -139,7 +139,7 @@ public class AutofitHelper {
      * Recursive binary search to find the best size for the text.
      */
     private static float getAutofitTextSize(CharSequence text, TextPaint paint,
-            float targetWidth, int maxLines, float low, float high, float precision,
+            float targetWidth, int maxLines, float low, float high, float autofit_precision,
             DisplayMetrics displayMetrics) {
         float mid = (low + high) / 2.0f;
         int lineCount = 1;
@@ -159,14 +159,14 @@ public class AutofitHelper {
 
         if (lineCount > maxLines) {
             // For the case that `text` has more newline characters than `maxLines`.
-            if ((high - low) < precision) {
+            if ((high - low) < autofit_precision) {
                 return low;
             }
-            return getAutofitTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
+            return getAutofitTextSize(text, paint, targetWidth, maxLines, low, mid, autofit_precision,
                     displayMetrics);
         }
         else if (lineCount < maxLines) {
-            return getAutofitTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
+            return getAutofitTextSize(text, paint, targetWidth, maxLines, mid, high, autofit_precision,
                     displayMetrics);
         }
         else {
@@ -181,13 +181,13 @@ public class AutofitHelper {
                 }
             }
 
-            if ((high - low) < precision) {
+            if ((high - low) < autofit_precision) {
                 return low;
             } else if (maxLineWidth > targetWidth) {
-                return getAutofitTextSize(text, paint, targetWidth, maxLines, low, mid, precision,
+                return getAutofitTextSize(text, paint, targetWidth, maxLines, low, mid, autofit_precision,
                         displayMetrics);
             } else if (maxLineWidth < targetWidth) {
-                return getAutofitTextSize(text, paint, targetWidth, maxLines, mid, high, precision,
+                return getAutofitTextSize(text, paint, targetWidth, maxLines, mid, high, autofit_precision,
                         displayMetrics);
             } else {
                 return mid;
@@ -228,9 +228,9 @@ public class AutofitHelper {
     private float mTextSize;
 
     private int mMaxLines;
-    private float mMinTextSize;
+    private float mautofit_minTextSize;
     private float mMaxTextSize;
-    private float mPrecision;
+    private float mautofit_precision;
 
     private boolean mEnabled;
     private boolean mIsAutofitting;
@@ -251,9 +251,9 @@ public class AutofitHelper {
         setRawTextSize(view.getTextSize());
 
         mMaxLines = getMaxLines(view);
-        mMinTextSize = scaledDensity * DEFAULT_MIN_TEXT_SIZE;
+        mautofit_minTextSize = scaledDensity * DEFAULT_MIN_TEXT_SIZE;
         mMaxTextSize = mTextSize;
-        mPrecision = DEFAULT_PRECISION;
+        mautofit_precision = DEFAULT_autofit_precision;
     }
 
     /**
@@ -280,22 +280,22 @@ public class AutofitHelper {
     }
 
     /**
-     * Returns the amount of precision used to calculate the correct text size to fit within its
+     * Returns the amount of autofit_precision used to calculate the correct text size to fit within its
      * bounds.
      */
-    public float getPrecision() {
-        return mPrecision;
+    public float getautofit_precision() {
+        return mautofit_precision;
     }
 
     /**
-     * Set the amount of precision used to calculate the correct text size to fit within its
-     * bounds. Lower precision is more precise and takes more time.
+     * Set the amount of autofit_precision used to calculate the correct text size to fit within its
+     * bounds. Lower autofit_precision is more precise and takes more time.
      *
-     * @param precision The amount of precision.
+     * @param autofit_precision The amount of autofit_precision.
      */
-    public AutofitHelper setPrecision(float precision) {
-        if (mPrecision != precision) {
-            mPrecision = precision;
+    public AutofitHelper setautofit_precision(float autofit_precision) {
+        if (mautofit_precision != autofit_precision) {
+            mautofit_precision = autofit_precision;
 
             autofit();
         }
@@ -305,8 +305,8 @@ public class AutofitHelper {
     /**
      * Returns the minimum size (in pixels) of the text.
      */
-    public float getMinTextSize() {
-        return mMinTextSize;
+    public float getautofit_minTextSize() {
+        return mautofit_minTextSize;
     }
 
     /**
@@ -315,10 +315,10 @@ public class AutofitHelper {
      *
      * @param size The scaled pixel size.
      *
-     * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
+     * @attr ref me.grantland.R.styleable#AutofitTextView_autofit_minTextSize
      */
-    public AutofitHelper setMinTextSize(float size) {
-        return setMinTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    public AutofitHelper setautofit_minTextSize(float size) {
+        return setautofit_minTextSize(TypedValue.COMPLEX_UNIT_SP, size);
     }
 
     /**
@@ -328,9 +328,9 @@ public class AutofitHelper {
      * @param unit The desired dimension unit.
      * @param size The desired size in the given units.
      *
-     * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
+     * @attr ref me.grantland.R.styleable#AutofitTextView_autofit_minTextSize
      */
-    public AutofitHelper setMinTextSize(int unit, float size) {
+    public AutofitHelper setautofit_minTextSize(int unit, float size) {
         Context context = mTextView.getContext();
         Resources r = Resources.getSystem();
 
@@ -338,13 +338,13 @@ public class AutofitHelper {
             r = context.getResources();
         }
 
-        setRawMinTextSize(TypedValue.applyDimension(unit, size, r.getDisplayMetrics()));
+        setRawautofit_minTextSize(TypedValue.applyDimension(unit, size, r.getDisplayMetrics()));
         return this;
     }
 
-    private void setRawMinTextSize(float size) {
-        if (size != mMinTextSize) {
-            mMinTextSize = size;
+    private void setRawautofit_minTextSize(float size) {
+        if (size != mautofit_minTextSize) {
+            mautofit_minTextSize = size;
 
             autofit();
         }
@@ -496,7 +496,7 @@ public class AutofitHelper {
         float textSize;
 
         mIsAutofitting = true;
-        autofit(mTextView, mPaint, mMinTextSize, mMaxTextSize, mMaxLines, mPrecision);
+        autofit(mTextView, mPaint, mautofit_minTextSize, mMaxTextSize, mMaxLines, mautofit_precision);
         mIsAutofitting = false;
 
         textSize = mTextView.getTextSize();

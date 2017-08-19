@@ -41,7 +41,7 @@
             android:textSize="50sp"
             android:gravity="center"
             android:singleLine="true"
-            autofit:minTextSize="8sp"
+            autofit:autofit_minTextSize="8sp"
             />
     </LinearLayout>
 </ScrollView>

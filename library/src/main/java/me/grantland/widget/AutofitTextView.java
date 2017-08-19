@@ -8,9 +8,9 @@ import android.widget.TextView;
 /**
  * A {@link TextView} that re-sizes its text to be no larger than the width of the view.
  *
- * @attr ref R.styleable.AutofitTextView_sizeToFit
- * @attr ref R.styleable.AutofitTextView_minTextSize
- * @attr ref R.styleable.AutofitTextView_precision
+ * @attr ref R.styleable.AutofitTextView_autofit_sizeToFit
+ * @attr ref R.styleable.AutofitTextView_autofit_minTextSize
+ * @attr ref R.styleable.AutofitTextView_autofit_precision
  */
 public class AutofitTextView extends TextView implements AutofitHelper.OnTextSizeChangeListener {
 
@@ -81,26 +81,26 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     /**
      * Returns whether or not the text will be automatically re-sized to fit its constraints.
      */
-    public boolean isSizeToFit() {
+    public boolean isautofit_sizeToFit() {
         return mHelper.isEnabled();
     }
 
     /**
-     * Sets the property of this field (sizeToFit), to automatically resize the text to fit its
+     * Sets the property of this field (autofit_sizeToFit), to automatically resize the text to fit its
      * constraints.
      */
-    public void setSizeToFit() {
-        setSizeToFit(true);
+    public void setautofit_sizeToFit() {
+        setautofit_sizeToFit(true);
     }
 
     /**
      * If true, the text will automatically be re-sized to fit its constraints; if false, it will
      * act like a normal TextView.
      *
-     * @param sizeToFit
+     * @param autofit_sizeToFit
      */
-    public void setSizeToFit(boolean sizeToFit) {
-        mHelper.setEnabled(sizeToFit);
+    public void setautofit_sizeToFit(boolean autofit_sizeToFit) {
+        mHelper.setEnabled(autofit_sizeToFit);
     }
 
     /**
@@ -138,8 +138,8 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
     /**
      * Returns the minimum size (in pixels) of the text in this View.
      */
-    public float getMinTextSize() {
-        return mHelper.getMinTextSize();
+    public float getautofit_minTextSize() {
+        return mHelper.getautofit_minTextSize();
     }
 
     /**
@@ -148,10 +148,10 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
      *
      * @param minSize The scaled pixel size.
      *
-     * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
+     * @attr ref me.grantland.R.styleable#AutofitTextView_autofit_minTextSize
      */
-    public void setMinTextSize(int minSize) {
-        mHelper.setMinTextSize(TypedValue.COMPLEX_UNIT_SP, minSize);
+    public void setautofit_minTextSize(int minSize) {
+        mHelper.setautofit_minTextSize(TypedValue.COMPLEX_UNIT_SP, minSize);
     }
 
     /**
@@ -161,28 +161,28 @@ public class AutofitTextView extends TextView implements AutofitHelper.OnTextSiz
      * @param unit The desired dimension unit.
      * @param minSize The desired size in the given units.
      *
-     * @attr ref me.grantland.R.styleable#AutofitTextView_minTextSize
+     * @attr ref me.grantland.R.styleable#AutofitTextView_autofit_minTextSize
      */
-    public void setMinTextSize(int unit, float minSize) {
-        mHelper.setMinTextSize(unit, minSize);
+    public void setautofit_minTextSize(int unit, float minSize) {
+        mHelper.setautofit_minTextSize(unit, minSize);
     }
 
     /**
-     * Returns the amount of precision used to calculate the correct text size to fit within its
+     * Returns the amount of autofit_precision used to calculate the correct text size to fit within its
      * bounds.
      */
-    public float getPrecision() {
-        return mHelper.getPrecision();
+    public float getautofit_precision() {
+        return mHelper.getautofit_precision();
     }
 
     /**
-     * Set the amount of precision used to calculate the correct text size to fit within its
-     * bounds. Lower precision is more precise and takes more time.
+     * Set the amount of autofit_precision used to calculate the correct text size to fit within its
+     * bounds. Lower autofit_precision is more precise and takes more time.
      *
-     * @param precision The amount of precision.
+     * @param autofit_precision The amount of autofit_precision.
      */
-    public void setPrecision(float precision) {
-        mHelper.setPrecision(precision);
+    public void setautofit_precision(float autofit_precision) {
+        mHelper.setautofit_precision(autofit_precision);
     }
 
     @Override

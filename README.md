@@ -50,7 +50,7 @@ Use the built in Widget in code or XML:
     android:singleLine="true"
     android:maxLines="2"
     android:textSize="40sp"
-    autofit:minTextSize="16sp"
+    autofit:autofit_minTextSize="16sp"
     />
 ```
 
