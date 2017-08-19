@@ -3,11 +3,11 @@
 
     <declare-styleable name="AutofitTextView">
         <!-- Minimum size of the text. -->
-        <attr name="minTextSize" format="dimension" />
-        <!-- Amount of precision used to calculate the correct text size to fit within its
-        bounds. Lower precision is more precise and takes more time. -->
-        <attr name="precision" format="float" />
+        <attr name="autofit_minTextSize" format="dimension" />
+        <!-- Amount of autofit_precision used to calculate the correct text size to fit within its
+        bounds. Lower autofit_precision is more precise and takes more time. -->
+        <attr name="autofit_precision" format="float" />
         <!-- Defines whether to automatically resize text to fit to the view's bounds. -->
-        <attr name="sizeToFit" format="boolean" />
+        <attr name="autofit_sizeToFit" format="boolean" />
     </declare-styleable>
 </resources>
