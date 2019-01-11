@@ -2,6 +2,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/me.grantland/autofittextview/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/me.grantland/autofittextview)
 
+Fork from grantland/android-autofitexttextview
 A TextView that automatically resizes text to fit perfectly within its bounds.
 
 ![Example Image](/website/static/autofittextview.gif?raw=true)
@@ -11,7 +12,7 @@ A TextView that automatically resizes text to fit perfectly within its bounds.
 
 ```cson
 dependencies {
-    compile 'me.grantland:autofittextview:0.2.+'
+   implementation 'com.github.raquezha:android-autofittextview:0.2.2'
 }
 ```
 
